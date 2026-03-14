@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 1. Global Cursor Override (Required for your custom Reticle) */
+* {
+  cursor: none !important;
+}
+
+/* 2. Global Base Styles (Engineering Studio Theme) */
+body {
+  background-color: #050505;
+  color: #cbd5e1; /* slate-300 */
+  @apply antialiased selection:bg-emerald-500/30 selection:text-emerald-200;
+}
+
+/* 3. Sleek Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b; /* slate-800 */
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155; /* slate-700 */
+}
+
+/* Sidebar specific ultra-thin scrollbar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* =========================================
+   4. MARKDOWN / PROSE OVERRIDES
+   ========================================= */
+
+/* Headings */
+.prose h1 { @apply text-4xl font-black text-white mt-12 mb-6 border-b border-slate-800/60 pb-4 tracking-tighter; }
+.prose h2 { @apply text-2xl font-bold text-slate-100 mt-10 mb-5 flex items-center gap-3; }
+.prose h3 { @apply text-lg font-semibold text-slate-200 mt-8 mb-4; }
+.prose p  { @apply text-slate-400 leading-relaxed mb-6 text-[16px]; }
+.prose strong { @apply font-bold text-emerald-400; }
+.prose a { @apply text-emerald-400 hover:text-emerald-300 underline underline-offset-4 decoration-emerald-500/30 transition-colors; }
+.prose hr { @apply my-12 border-slate-800/60; }
+
+/* Lists */
+.prose ul, .prose ol { @apply mb-6 space-y-2 text-slate-400 pl-4; }
+.prose li { @apply leading-relaxed; }
+
+/* Blockquotes */
+.prose blockquote {
+  @apply border-l-2 border-emerald-500/40 pl-5 italic text-slate-400 bg-emerald-500/5 py-4 pr-4 rounded-r-xl my-8 shadow-[inset_0_0_20px_rgba(16,185,129,0.02)];
+}
+
+/* =========================================
+   5. CODE BLOCK FIX (Removes the purple bg)
+   ========================================= */
+
+/* Inline Code (e.g., `print()`) */
+.prose code {
+  @apply font-mono text-[0.85em] px-1.5 py-0.5 rounded text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.1)];
+}
+
+/* Block Code (<pre>) */
+.prose pre,
+.prose pre[class*="language-"],
+pre[class*="language-"] {
+  background-color: #0d1612 !important;
+  @apply border border-slate-800 p-5 rounded-xl overflow-x-auto shadow-[0_0_30px_rgba(0,0,0,0.5)] my-8;
+}
+
+/* Ensure the code inside the <pre> doesn't double-apply the inline styles */
+.prose pre code,
+.prose pre code[class*="language-"] {
+  @apply bg-transparent border-none p-0 text-slate-300 shadow-none text-[13.5px] leading-[1.8] !important;
+  background-color: transparent !important;
+}
+
+/* =========================================
+   6. TABLES (High-Contrast Data display)
+   ========================================= */
+.prose table {
+  @apply w-full border-collapse my-8 text-sm overflow-hidden rounded-xl border border-slate-800/60 shadow-lg;
+}
+.prose thead { @apply bg-[#0d0d0d]; }
+.prose th {
+  @apply text-emerald-400 font-mono text-xs uppercase tracking-wider text-left px-4 py-3 border-b border-slate-800;
+}
+.prose td { @apply px-4 py-3 border-b border-slate-800/40 text-slate-400 text-[13.5px] bg-[#050505]; }
+.prose tr:hover td { @apply bg-emerald-500/[0.02] transition-colors; }
+
+/* Remove old animations that are no longer used */

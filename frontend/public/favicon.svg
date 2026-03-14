@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Dark background with subtle rounded corners -->
+  <rect width="32" height="32" rx="7" fill="#050505"/>
+
+  <!-- Emerald glow border -->
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" stroke="#10b981" stroke-opacity="0.4"/>
+
+  <!-- Terminal prompt: "> " -->
+  <text x="4" y="14" font-family="monospace" font-size="9" font-weight="700" fill="#10b981">&gt;_</text>
+
+  <!-- Python snake-style "Py" mark -->
+  <text x="4" y="26" font-family="monospace" font-size="9" font-weight="900" fill="#6ee7b7">Py</text>
+
+  <!-- Top-right dot indicator (active/online) -->
+  <circle cx="27" cy="6" r="2.5" fill="#10b981"/>
+  <circle cx="27" cy="6" r="2.5" fill="#10b981" opacity="0.4">
+    <animate attributeName="r" values="2.5;4;2.5" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
