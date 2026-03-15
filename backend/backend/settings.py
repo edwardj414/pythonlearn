@@ -103,11 +103,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ─── CORS ────────────────────────────────────────────────────
 # In production, replace with your actual Vercel URL
-CORS_ALLOWED_ORIGINS = [
+CORS_ALLOWED_ORIGINS = list(filter(None, [
     'http://localhost:5173',
-    os.environ.get('FRONTEND_URL', ''),
     'https://pyplatform.vercel.app',
-]
+    os.environ.get('FRONTEND_URL', ''),
+]))
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only allow all in development
 
 # ─── REST FRAMEWORK ──────────────────────────────────────────

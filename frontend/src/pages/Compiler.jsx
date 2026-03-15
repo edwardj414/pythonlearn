@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Terminal, ArrowLeft } from 'lucide-react'
 import CodeEditor from '../components/CodeEditor'
+import SnakeCursor from '../components/SnakeCursor'
 
 export default function Compiler() {
   const defaultCode = `# Welcome to the Python Learn Sandbox!
@@ -15,9 +16,10 @@ print(greet("Developer"))
 `
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-[#0F0A1F] flex flex-col text-slate-200">
+    <div className="min-h-[calc(100vh-56px)] bg-[#0F0A1F] flex flex-col text-slate-200 cursor-none">
 
       {/* Background Glow */}
+      <SnakeCursor />
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-purple-900/10 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-6xl mx-auto w-full px-6 py-8 flex-1 flex flex-col relative z-10">
