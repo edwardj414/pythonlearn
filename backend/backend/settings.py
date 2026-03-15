@@ -7,10 +7,17 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ─── SECURITY ───────────────────────────────────────────────
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-only-change-in-prod')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# --- Security ---
+SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-change-in-prod')
+DEBUG      = os.environ.get('DEBUG', 'False') == 'True'
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.railway.app',           # ← Railway domain
+    os.environ.get('RAILWAY_STATIC_URL', ''),
+    os.environ.get('ALLOWED_HOST', ''),
+]
 
 # ─── APPS ────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -100,10 +107,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ─── CORS ────────────────────────────────────────────────────
 # In production, replace with your actual Vercel URL
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:5173,http://127.0.0.1:5173'
-).split(',')
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    os.environ.get('FRONTEND_URL', ''),
+]
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only allow all in development
 
 # ─── REST FRAMEWORK ──────────────────────────────────────────
