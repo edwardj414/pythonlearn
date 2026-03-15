@@ -20,6 +20,8 @@ ALLOWED_HOSTS = [
     os.environ.get('ALLOWED_HOST', ''),
 ]
 
+APPEND_SLASH = False
+
 # ─── APPS ────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
