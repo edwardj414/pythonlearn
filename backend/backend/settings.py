@@ -15,6 +15,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.railway.app',           # ← Railway domain
+    '.vercel.app',
     os.environ.get('RAILWAY_STATIC_URL', ''),
     os.environ.get('ALLOWED_HOST', ''),
 ]
@@ -105,6 +106,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     os.environ.get('FRONTEND_URL', ''),
+    'https://pyplatform.vercel.app',
 ]
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only allow all in development
 
