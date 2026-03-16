@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { getTopics } from '../api'
 import SnakeCursor from '../components/SnakeCursor'
 import { Terminal, Database, Cpu, ArrowUpRight, Play, Layers, Code, Zap, Shield, GitBranch } from 'lucide-react'
-import TopicIcon from '../components/TopicIcon'
+import TopicIcon from '../components/Topicicon'
 
 const DIFF_BADGE = {
   beginner:     'border-emerald-500/30 text-emerald-400 bg-emerald-500/10 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
