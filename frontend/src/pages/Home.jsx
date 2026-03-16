@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { getTopics } from '../api'
 import SnakeCursor from '../components/SnakeCursor'
 import { Terminal, Database, Cpu, ArrowUpRight, Play, Layers, Code, Zap, Shield, GitBranch } from 'lucide-react'
+import TopicIcon from '../components/TopicIcon'
 
 const DIFF_BADGE = {
   beginner:     'border-emerald-500/30 text-emerald-400 bg-emerald-500/10 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
@@ -274,9 +275,12 @@ export default function Home() {
                   <div className="absolute left-0 top-0 h-full w-0.5 bg-emerald-500/0 group-hover:bg-emerald-500/60 transition-all duration-300 rounded-full" />
 
                   <div className="flex items-center gap-6 mb-4 md:mb-0 relative z-10">
-                    <div className="text-2xl text-slate-600 group-hover:text-emerald-400 transition-all duration-300 w-10 text-center group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(16,185,129,0.6)]">
-                      {topic.icon}
-                    </div>
+                    <TopicIcon
+                      slug={topic.slug}
+                      size={17}
+                      boxSize="w-9 h-9"
+                      className="group-hover:scale-110 group-hover:shadow-[0_0_14px_rgba(16,185,129,0.2)] transition-all duration-300"
+                    />
                     <div>
                       <div className="flex items-center gap-3 mb-1">
                         <span className="text-[10px] font-mono text-slate-700 group-hover:text-emerald-500/70 transition-colors tabular-nums">
@@ -339,7 +343,7 @@ export default function Home() {
                 <h3 className="text-2xl font-black text-white mb-3 tracking-tight">Native In-Browser Runtime</h3>
                 <p className="text-slate-400 leading-relaxed mb-8 max-w-lg">Write, compile, and execute Python code entirely within your browser. Our sandboxed runtime ensures zero setup time.</p>
 
-                <div className="relative w-full bg-[#050505] border border-slate-800 rounded-xl overflow-hidden group-hover:border-slate-700 group-hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] transition-all duration-500">
+                <div className="w-full bg-[#050505] border border-slate-800 rounded-xl overflow-hidden group-hover:border-slate-700 group-hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] transition-all duration-500">
                   <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="p-3 flex items-center gap-2 border-b border-slate-800">
                     <div className="w-2 h-2 rounded-full bg-rose-500/60" />
