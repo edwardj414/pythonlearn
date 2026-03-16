@@ -4,9 +4,9 @@ import TopicIcon from './TopicIcon'
 import { useState } from 'react'
 
 const DIFFICULTY_COLOR = {
-  beginner:     'bg-emerald-500/5 text-emerald-400 border border-emerald-500/20',
-  intermediate: 'bg-amber-500/5  text-amber-400  border border-amber-500/20',
-  advanced:     'bg-rose-500/5   text-rose-400   border border-rose-500/20',
+  beginner: 'bg-emerald-500/5 text-emerald-400 border border-emerald-500/20',
+  intermediate: 'bg-amber-500/5 text-amber-400 border border-amber-500/20',
+  advanced: 'bg-rose-500/5 text-rose-400 border border-rose-500/20',
 }
 
 export default function Sidebar({ topics }) {
@@ -14,7 +14,7 @@ export default function Sidebar({ topics }) {
   // Check if we're currently on a quiz page
   const isQuizPage = window.location.pathname.endsWith('/quiz')
 
-  const [collapsed, setCollapsed]   = useState({})
+  const [collapsed, setCollapsed] = useState({})
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const toggle = (slug) => setCollapsed(c => ({ ...c, [slug]: !c[slug] }))
@@ -59,7 +59,7 @@ export default function Sidebar({ topics }) {
           : <div className="px-3 pb-6">
               {topics.map((topic) => {
                 const isActive = topic.slug === topicSlug
-                const isOpen   = collapsed[topic.slug] !== undefined ? !collapsed[topic.slug] : isActive
+                const isOpen = collapsed[topic.slug] !== undefined ? !collapsed[topic.slug] : isActive
 
                 return (
                   <div key={topic.slug} className="mb-1.5">
@@ -91,13 +91,16 @@ export default function Sidebar({ topics }) {
                       ${isOpen ? 'max-h-[2000px] opacity-100 mt-1.5 mb-3' : 'max-h-0 opacity-0'}
                     `}>
                       <div className="ml-6 flex flex-col gap-0.5 border-l border-slate-800/60 pl-3 py-0.5">
+                        
                         {topic.lessons.map((lesson) => {
                           const isCurrent = lesson.slug === lessonSlug && topic.slug === topicSlug
                           const isThisQuiz = isCurrent && isQuizPage
 
                           return (
-                            <div key={lesson.slug}>
-                              {/* Lesson row */}
+                            // THE FIX: "flex flex-col gap-1.5 mb-2" prevents the Quiz link from overlapping the Lesson link
+                            <div key={lesson.slug} className="flex flex-col gap-1.5 mb-2">
+                              
+                              {/* 1. Lesson row */}
                               <Link
                                 to={`/topic/${topic.slug}/${lesson.slug}`}
                                 className={`cursor-none flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group/link border
@@ -118,11 +121,11 @@ export default function Sidebar({ topics }) {
                                 )}
                               </Link>
 
-                              {/* Quiz row — only show under the active topic's lessons */}
+                              {/* 2. Quiz row — only show under the active topic's lessons */}
                               {isCurrent && (
                                 <Link
                                   to={`/topic/${topic.slug}/${lesson.slug}/quiz`}
-                                  className={`cursor-none flex items-center gap-3 pl-6 pr-3 py-2 rounded-xl text-[12px] font-medium transition-all group/quiz border ml-1 mb-1
+                                  className={`cursor-none flex items-center gap-3 pl-6 pr-3 py-2 rounded-xl text-[12px] font-medium transition-all group/quiz border ml-1
                                     ${isThisQuiz
                                       ? 'bg-amber-500/10 border-amber-500/25 text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.1)]'
                                       : 'border-transparent text-slate-600 hover:text-amber-400 hover:bg-amber-500/5 hover:border-amber-500/15'
@@ -138,6 +141,7 @@ export default function Sidebar({ topics }) {
                             </div>
                           )
                         })}
+
                       </div>
                     </div>
 
