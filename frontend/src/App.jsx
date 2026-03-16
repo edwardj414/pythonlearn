@@ -9,7 +9,7 @@ import Compiler from './pages/Compiler'
 export default function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div className="min-h-screen bg-gradient-to-tr from-violet-500 to-purple-900">
+      <div className="min-h-screen bg-[#050505]">
         <Navbar />
         <div className="flex-1">
           <Routes>
