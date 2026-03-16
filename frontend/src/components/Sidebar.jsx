@@ -14,10 +14,12 @@ export default function Sidebar({ topics }) {
   // Check if we're currently on a quiz page
   const isQuizPage = window.location.pathname.endsWith('/quiz')
 
-  const [collapsed, setCollapsed] = useState({})
+  // FIX 1: Track 'expanded' state instead of 'collapsed' for clearer logic
+  const [expanded, setExpanded] = useState({})
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
-  const toggle = (slug) => setCollapsed(c => ({ ...c, [slug]: !c[slug] }))
+  // FIX 2: Pass the current open state to safely flip it on the first click
+  const toggle = (slug, currentIsOpen) => setExpanded(prev => ({ ...prev, [slug]: !currentIsOpen }))
 
   return (
     <aside
@@ -59,14 +61,16 @@ export default function Sidebar({ topics }) {
           : <div className="px-3 pb-6">
               {topics.map((topic) => {
                 const isActive = topic.slug === topicSlug
-                const isOpen = collapsed[topic.slug] !== undefined ? !collapsed[topic.slug] : isActive
+                // FIX 3: Check expanded state, fallback to isActive
+                const isOpen = expanded[topic.slug] !== undefined ? expanded[topic.slug] : isActive
 
                 return (
                   <div key={topic.slug} className="mb-1.5">
 
                     {/* Topic toggle */}
                     <button
-                      onClick={() => toggle(topic.slug)}
+                      // FIX 4: Pass the exact current state into the toggle
+                      onClick={() => toggle(topic.slug, isOpen)}
                       className={`cursor-none w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm font-bold transition-all group border
                         ${isActive
                           ? 'text-slate-200 bg-slate-900/60 border-slate-800'
@@ -97,7 +101,7 @@ export default function Sidebar({ topics }) {
                           const isThisQuiz = isCurrent && isQuizPage
 
                           return (
-                            // THE FIX: "flex flex-col gap-1.5 mb-2" prevents the Quiz link from overlapping the Lesson link
+                            // PREVIOUS FIX: "flex flex-col gap-1.5 mb-2" prevents the Quiz link from overlapping the Lesson link
                             <div key={lesson.slug} className="flex flex-col gap-1.5 mb-2">
                               
                               {/* 1. Lesson row */}
