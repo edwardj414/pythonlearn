@@ -344,7 +344,7 @@ export default function Home() {
                 <p className="text-slate-400 leading-relaxed mb-8 max-w-lg">Write, compile, and execute Python code entirely within your browser. Our sandboxed runtime ensures zero setup time.</p>
 
                 <div className="w-full bg-[#050505] border border-slate-800 rounded-xl overflow-hidden group-hover:border-slate-700 group-hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] transition-all duration-500">
-                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="relative top-0 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="p-3 flex items-center gap-2 border-b border-slate-800">
                     <div className="w-2 h-2 rounded-full bg-rose-500/60" />
                     <div className="w-2 h-2 rounded-full bg-amber-500/60" />
