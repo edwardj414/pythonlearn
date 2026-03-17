@@ -146,9 +146,9 @@ export default function Home() {
               RUNTIME V2.0 ACTIVE
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black tracking-tighter text-white mb-6 leading-[1.05] animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-150 fill-mode-both">
+            <h1 className="text-6xl lg:text-8xl font-black tracking-tighter text-white mb-6 leading-[1.1] pb-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-150 fill-mode-both">
               Write Python.<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500 animate-[gradient_8s_ease_infinite] bg-[length:200%_auto]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500 animate-[gradient_8s_ease_infinite] bg-[length:200%_auto] py-2">
                 Deploy Reality.
               </span>
             </h1>
