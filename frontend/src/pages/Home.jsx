@@ -13,8 +13,8 @@ const DIFF_BADGE = {
 }
 
 const STATS = [
-  { value: 12, suffix: '+', label: 'Core Modules' },
-  { value: 39, suffix: '+', label: 'Quizzes' },
+  { value: 16, suffix: '+', label: 'Core Modules' },
+  { value: 60, suffix: '+', label: 'Quizzes' },
   { value: 100, suffix: '%', label: 'Browser-Based' },
   { value: 0, suffix: 'ms', label: 'Setup Time' },
 ]

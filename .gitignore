@@ -40,6 +40,7 @@ static_root/
 .env
 .env.local
 .env.*.local
+.env.production
 
 # ═══════════════════════════════════════
 # NODE / REACT / VITE

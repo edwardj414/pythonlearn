@@ -2,15 +2,43 @@ import subprocess
 import sys
 import tempfile
 import os
+import json
+import base64
+import hashlib
 
-from rest_framework import generics
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import Topic, Lesson, Quiz
-from .serializers import TopicSerializer, LessonDetailSerializer
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 
+from rest_framework import generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+
+from .models import Topic, Lesson, Quiz
+from .serializers import TopicSerializer, LessonDetailSerializer, QuizSerializer
+
+
+# --- AES ENCRYPTION UTILITY ---
+# --- AES ENCRYPTION UTILITY ---
+def encrypt_payload(data):
+    raw_key = getattr(settings, 'AES_SECRET_KEY', 'x9P!mQ2v$L8zT#wY5kR@bN7cX4jH1fG6')
+
+    # ✅ Match frontend: SHA256 hash the key (CryptoJS.SHA256 = 32 raw bytes)
+    key = hashlib.sha256(raw_key.encode('utf-8')).digest()  # 32 bytes
+
+    json_data   = json.dumps(data).encode('utf-8')
+    padded_data = pad(json_data, AES.block_size)
+
+    cipher   = AES.new(key, AES.MODE_CBC)
+    ct_bytes = cipher.encrypt(padded_data)
+    return {
+        'iv':         base64.b64encode(cipher.iv).decode('utf-8'),
+        'ciphertext': base64.b64encode(ct_bytes).decode('utf-8'),
+    }
+
+# --- READ-ONLY TOPIC & LESSON VIEWS ---
 class TopicListView(generics.ListAPIView):
     queryset = Topic.objects.prefetch_related('lessons').all()
     serializer_class = TopicSerializer
@@ -27,81 +55,89 @@ class LessonDetailView(generics.RetrieveAPIView):
     serializer_class = LessonDetailSerializer
 
     def get_object(self):
-        return Lesson.objects.get(
+        return get_object_or_404(
+            Lesson,
             topic__slug=self.kwargs['topic_slug'],
             slug=self.kwargs['lesson_slug']
         )
 
 
-@api_view(['GET'])
-def search(request):
-    query = request.GET.get('q', '')
-    if not query:
-        return Response([])
-    lessons = Lesson.objects.filter(title__icontains=query).select_related('topic')[:10]
-    results = [{'title': l.title, 'topic': l.topic.title,
-                'url': f"/topic/{l.topic.slug}/{l.slug}"} for l in lessons]
-    return Response(results)
+# --- REFACTORED: SEARCH APIVIEW ---
+class SearchView(APIView):
+    def get(self, request, *args, **kwargs):
+        query = request.query_params.get('q', '')
+        if not query:
+            return Response([])
 
-
-@api_view(['POST'])
-def run_code(request):
-    code = request.data.get('code', '')
-    if not code.strip():
-        return Response({'stdout': '', 'stderr': 'No code provided.', 'code': 1})
-
-    tmp_path = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode='w', suffix='.py', delete=False, encoding='utf-8'
-        ) as f:
-            f.write(code)
-            tmp_path = f.name
-
-        result = subprocess.run(
-            [sys.executable, tmp_path],
-            capture_output=True,
-            text=True,
-            encoding='utf-8',
-            timeout=10,
-            env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
-        )
-        return Response({
-            'stdout': result.stdout,
-            'stderr': result.stderr,
-            'code': result.returncode,
-        })
-    except subprocess.TimeoutExpired:
-        return Response({'stdout': '', 'stderr': 'Error: Timed out (10s limit).', 'code': 1})
-    except Exception as e:
-        return Response({'stdout': '', 'stderr': str(e), 'code': 1})
-    finally:
-        if tmp_path:
-            try:
-                os.unlink(tmp_path)
-            except Exception:
-                pass
-
-def quiz_detail(request, topic_slug, lesson_slug):
-    quiz = get_object_or_404(
-        Quiz,
-        lesson__slug=lesson_slug,
-        lesson__topic__slug=topic_slug
-    )
-    data = {
-        "id": quiz.id,
-        "title": quiz.title,
-        "xp_reward": quiz.xp_reward,
-        "questions": [
+        lessons = Lesson.objects.filter(title__icontains=query).select_related('topic')[:10]
+        results = [
             {
-                "id": q.id, "text": q.text,
-                "type": q.question_type,
-                "code_snippet": q.code_snippet,
-                "option_a": q.option_a, "option_b": q.option_b,
-                "option_c": q.option_c, "option_d": q.option_d,
-                "correct": q.correct, "explanation": q.explanation,
-            }
-            for q in quiz.questions.order_by('order')
+                'title': l.title,
+                'topic': l.topic.title,
+                'url': f"/topic/{l.topic.slug}/{l.slug}"
+            } for l in lessons
         ]
-    }
-    return JsonResponse(data)
+        return Response(results)
+
+
+# --- REFACTORED: COMPILER APIVIEW ---
+class RunCodeView(APIView):
+    def post(self, request, *args, **kwargs):
+        code = request.data.get('code', '')
+        if not code.strip():
+            return Response({'stdout': '', 'stderr': 'No code provided.', 'code': 1})
+
+        tmp_path = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                    mode='w', suffix='.py', delete=False, encoding='utf-8'
+            ) as f:
+                f.write(code)
+                tmp_path = f.name
+
+            result = subprocess.run(
+                [sys.executable, tmp_path],
+                capture_output=True,
+                text=True,
+                encoding='utf-8',
+                timeout=10,
+                env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
+            )
+            return Response({
+                'stdout': result.stdout,
+                'stderr': result.stderr,
+                'code': result.returncode,
+            })
+        except subprocess.TimeoutExpired:
+            return Response({'stdout': '', 'stderr': 'Error: Timed out (10s limit).', 'code': 1})
+        except Exception as e:
+            return Response({'stdout': '', 'stderr': str(e), 'code': 1})
+        finally:
+            if tmp_path:
+                try:
+                    os.unlink(tmp_path)
+                except Exception:
+                    pass
+
+
+# --- REFACTORED & ENCRYPTED: QUIZ DETAIL APIVIEW ---
+class QuizDetailView(generics.RetrieveAPIView):
+    serializer_class = QuizSerializer
+
+    def get_object(self):
+        return get_object_or_404(
+            Quiz,
+            lesson__slug=self.kwargs['lesson_slug'],
+            lesson__topic__slug=self.kwargs['topic_slug']
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        # 1. Get the standard quiz object using DRF
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+
+        # 2. Encrypt the serialized data to prevent cheating
+        encrypted_data = encrypt_payload(serializer.data)
+
+        # 3. Return the encrypted payload
+        return Response(encrypted_data)

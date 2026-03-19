@@ -22,6 +22,11 @@ ALLOWED_HOSTS = [
 
 APPEND_SLASH = False
 
+#AES Encryption Key
+#AES_SECRET_KEY = os.environ.get('AES_SECRET_KEY', 'qnyomVZZtTWP%8$IrVtuGFCvR%RGESF8')
+
+# settings.py
+AES_SECRET_KEY = 'x9P!mQ2vZL8zT#wY5kR@bN7cX4jH1fG6'
 # ─── APPS ────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -8,3 +8,4 @@ psycopg[binary]
 python-dotenv==1.0.0
 psycopg2-binary
 dj-database-url
+pycryptodome

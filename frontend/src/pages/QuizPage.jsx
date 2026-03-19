@@ -8,6 +8,9 @@ import {
   XCircle, RotateCcw, Trophy, Zap, Loader2, ClipboardCheck
 } from 'lucide-react'
 
+// Import your AES Decryption utility
+import { decryptPayload } from '../utils/crypto';
+
 export default function QuizPage() {
   const { topicSlug, lessonSlug } = useParams()
   const navigate = useNavigate()
@@ -25,9 +28,19 @@ export default function QuizPage() {
     setAnswers({})
     setSubmitted(false)
     setScore(null)
+
     getQuiz(topicSlug, lessonSlug)
-      .then(({ data }) => { setQuiz(data); setLoading(false) })
-      .catch(() => { setError(true); setLoading(false) })
+      .then(({ data }) => {
+        // Intercept and decrypt the payload before setting state
+        const unlockedData = decryptPayload(data);
+        setQuiz(unlockedData);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Quiz Fetch/Decrypt Error:", err);
+        setError(true);
+        setLoading(false);
+      })
   }, [topicSlug, lessonSlug])
 
   const handleSelect = (questionId, option) => {
@@ -161,12 +174,6 @@ export default function QuizPage() {
                       : 'STUDY THE THEORY AND RETRY'}
                   </div>
                 </div>
-                <button
-                  onClick={handleReset}
-                  className="cursor-none flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 text-xs font-mono transition-all"
-                >
-                  <RotateCcw size={13} /> RETRY
-                </button>
               </div>
             )}
 
@@ -206,7 +213,7 @@ export default function QuizPage() {
                       <div className="flex-1">
                         <p className="text-slate-200 font-semibold leading-snug">{q.text}</p>
                         {q.code_snippet && (
-                          <pre className="mt-3 bg-[#0d1612] border border-slate-800 rounded-lg px-4 py-3 text-[13px] font-mono text-emerald-300 overflow-x-auto">
+                          <pre className="mt-3 bg-[#0d1612] border border-slate-800 rounded-lg px-4 py-3 text-[13px] font-mono text-emerald-300 overflow-x-auto code-scrollbar">
                             {q.code_snippet}
                           </pre>
                         )}
