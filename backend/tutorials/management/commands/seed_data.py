@@ -2394,6 +2394,1746 @@ for data in invalid:
 ]
 },
 
+# ═══════════════════════════════════════════════════════
+# PASTE THESE INSIDE YOUR EXISTING TOPICS = [ ... ] LIST
+# ═══════════════════════════════════════════════════════
+
+    # ═══════════════════════════════════════════════════════
+    # 13. REGEX
+    # ═══════════════════════════════════════════════════════
+    {
+        "title": "Regular Expressions", "slug": "regex", "color": "orange",
+        "description": "Master pattern matching, search, replace, and extraction with Python's re module",
+        "icon": "🔍", "order": 13,
+        "lessons": [
+            {
+                "title": "Regex Fundamentals", "slug": "regex-fundamentals",
+                "difficulty": "intermediate", "order": 1, "xp_reward": 20,
+                "content": """# Regular Expressions
+
+The `re` module lets you search, match, and manipulate strings using patterns.
+
+## Basic Usage
+
+```python
+import re
+
+# Search — find first match anywhere in string
+match = re.search(r'\\d+', 'Price: 42 dollars')
+match.group()     # '42'
+
+# Match — only matches at start of string
+re.match(r'\\d+', '42 apples')   # Match object
+re.match(r'\\d+', 'apples 42')   # None
+
+# Findall — return all matches as list
+re.findall(r'\\d+', '3 cats, 14 dogs, 7 birds')
+# ['3', '14', '7']
+
+# Sub — replace matches
+re.sub(r'\\s+', '-', 'hello world foo')   # 'hello-world-foo'
+```
+
+## Pattern Cheatsheet
+
+```python
+.          # Any character except newline
+\\d         # Digit [0-9]
+\\D         # Non-digit
+\\w         # Word char [a-zA-Z0-9_]
+\\W         # Non-word
+\\s         # Whitespace
+\\S         # Non-whitespace
+^          # Start of string
+$          # End of string
+\\b         # Word boundary
+
+# Quantifiers
+*          # 0 or more
++          # 1 or more
+?          # 0 or 1 (optional)
+{3}        # Exactly 3
+{2,5}      # Between 2 and 5
+{3,}       # 3 or more
+
+# Groups
+(abc)      # Capture group
+(?:abc)    # Non-capturing group
+(?P<name>abc)  # Named group
+```
+
+## Flags
+
+```python
+re.IGNORECASE  # Case-insensitive
+re.MULTILINE   # ^ and $ match line boundaries
+re.DOTALL      # . matches newline too
+
+re.findall(r'python', 'Python PYTHON python', re.IGNORECASE)
+# ['Python', 'PYTHON', 'python']
+```
+
+## Compiled Patterns (Faster in Loops)
+
+```python
+pattern = re.compile(r'\\b[A-Z][a-z]+\\b')
+pattern.findall('Hello World foo Bar')   # ['Hello', 'World', 'Bar']
+```
+
+> 💡 Always use **raw strings** (`r'...'`) for regex patterns to avoid double-escaping backslashes.
+""",
+                "code_example": """import re
+
+# ── Email validator ──────────────────────────
+EMAIL_RE = re.compile(
+    r'^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$'
+)
+
+emails = [
+    "alice@example.com", "bob.smith+tag@work.co.uk",
+    "not-an-email", "@missing.com", "bad@", "ok@domain.org"
+]
+print("=== Email Validation ===")
+for e in emails:
+    ok = bool(EMAIL_RE.match(e))
+    print(f"  {'VALID' if ok else 'INVALID':7}  {e}")
+
+# ── Extract structured data ──────────────────
+print()
+print("=== Data Extraction ===")
+log = \"\"\"
+2024-01-15 08:23:11 ERROR   Database connection failed (retries=3)
+2024-01-15 08:23:45 INFO    Server started on port 8080
+2024-01-15 08:25:02 WARNING Memory usage at 87% (threshold=80%)
+2024-01-15 08:26:18 ERROR   Request timeout after 30s (url=/api/data)
+\"\"\"
+
+LOG_RE = re.compile(
+    r'(\\d{4}-\\d{2}-\\d{2}) (\\d{2}:\\d{2}:\\d{2}) (\\w+)\\s+(.+)'
+)
+for match in LOG_RE.finditer(log):
+    date, time, level, msg = match.groups()
+    icon = {"ERROR":"❌","WARNING":"⚠️","INFO":"ℹ️"}.get(level, "•")
+    print(f"  {icon} [{date} {time}] {level}: {msg[:50]}")
+
+# ── Named groups ─────────────────────────────
+print()
+print("=== Named Groups ===")
+URL_RE = re.compile(
+    r'(?P<scheme>https?)://(?P<host>[\\w.\\-]+)(?P<path>/[^?#]*)?'
+    r'(?:\\?(?P<query>[^#]*))?'
+)
+urls = [
+    "https://api.example.com/v1/users?page=2&limit=10",
+    "http://localhost:8000/api/topics/",
+    "https://docs.python.org/3/library/re.html",
+]
+for url in urls:
+    m = URL_RE.match(url)
+    if m:
+        d = m.groupdict()
+        print(f"  host={d['host']}, path={d['path']}, query={d['query']}")
+
+# ── Find and replace ─────────────────────────
+print()
+print("=== Sub & Replace ===")
+text = "Call us at 123-456-7890 or +44 20 7946 0958 for info"
+masked = re.sub(r'[\\d\\s\\-\\+\\(\\)]{7,}', '[PHONE REDACTED]', text)
+print(f"  Original: {text}")
+print(f"  Masked:   {masked}")
+""",
+                "quiz": {
+                    "title": "Regex Quiz",
+                    "xp_reward": 25,
+                    "questions": [
+                        {
+                            "text": "What does `re.findall(r'\\\\d+', 'a1b22c333')` return?",
+                            "type": "code", "code": "import re; re.findall(r'\\d+', 'a1b22c333')",
+                            "a": "['1', '2', '3']", "b": "['1', '22', '333']",
+                            "c": "['123']", "d": "'1', '22', '333'",
+                            "correct": "b",
+                            "explanation": "\\d+ matches one or more digits greedily, so it captures '1', '22', and '333' as separate matches."
+                        },
+                        {
+                            "text": "What is the difference between `re.match()` and `re.search()`?",
+                            "type": "mcq",
+                            "a": "match() is faster", "b": "search() is case-insensitive",
+                            "c": "match() only matches at the start; search() scans the whole string",
+                            "d": "They are identical",
+                            "correct": "c",
+                            "explanation": "re.match() only checks the beginning of the string. re.search() scans through the entire string."
+                        },
+                        {
+                            "text": "Why should you use raw strings (r'...') for regex patterns?",
+                            "type": "mcq",
+                            "a": "They run faster", "b": "They prevent Python from interpreting backslashes as escape sequences",
+                            "c": "They enable multiline matching", "d": "They are required by the re module",
+                            "correct": "b",
+                            "explanation": "Without r'', \\d would be interpreted by Python before regex sees it. Raw strings pass backslashes literally to the regex engine."
+                        },
+                        {
+                            "text": "What does `(?P<name>...)` do in a regex pattern?",
+                            "type": "mcq",
+                            "a": "Excludes the group from results", "b": "Creates a named capture group accessible by name",
+                            "c": "Makes the group optional", "d": "Repeats the group by name",
+                            "correct": "b",
+                            "explanation": "(?P<name>...) creates a named group. Access it with match.group('name') or match.groupdict()."
+                        },
+                    ]
+                }
+            },
+            {
+                "title": "Regex — Groups, Lookahead & Replace", "slug": "regex-advanced",
+                "difficulty": "advanced", "order": 2, "xp_reward": 30,
+                "content": """# Regex — Groups, Lookahead & Replace
+
+## Capture Groups
+
+```python
+import re
+
+# Basic groups
+m = re.search(r'(\\d{4})-(\\d{2})-(\\d{2})', '2024-01-15')
+m.group(0)   # '2024-01-15'  (full match)
+m.group(1)   # '2024'
+m.group(2)   # '01'
+m.groups()   # ('2024', '01', '15')
+
+# Named groups
+m = re.search(r'(?P<year>\\d{4})-(?P<month>\\d{2})-(?P<day>\\d{2})', '2024-01-15')
+m.group('year')    # '2024'
+m.groupdict()      # {'year': '2024', 'month': '01', 'day': '15'}
+```
+
+## Lookahead & Lookbehind
+
+```python
+# Positive lookahead (?=...) — match only if followed by
+re.findall(r'\\d+(?= dollars)', '42 dollars and 10 euros')
+# ['42']  — only 42, because it's followed by ' dollars'
+
+# Negative lookahead (?!...) — match only if NOT followed by
+re.findall(r'\\d+(?! dollars)', '42 dollars and 10 euros')
+# ['10']
+
+# Positive lookbehind (?<=...) — match only if preceded by
+re.findall(r'(?<=\\$)\\d+', 'Total: $42 and $100')
+# ['42', '100']
+
+# Negative lookbehind (?<!...)
+re.findall(r'(?<!\\$)\\d+', 'Item: 5, Price: $42')
+# ['5']
+```
+
+## Advanced re.sub()
+
+```python
+# Use backreferences in replacement
+re.sub(r'(\\w+) (\\w+)', r'\\2 \\1', 'Hello World')
+# 'World Hello'  — swaps two words
+
+# Use a function as replacement
+def double_nums(m):
+    return str(int(m.group()) * 2)
+
+re.sub(r'\\d+', double_nums, 'I have 3 cats and 7 dogs')
+# 'I have 6 cats and 14 dogs'
+```
+
+## re.split()
+
+```python
+re.split(r'[,;:\\s]+', 'one, two; three:four  five')
+# ['one', 'two', 'three', 'four', 'five']
+```
+""",
+                "code_example": """import re
+
+# Password strength checker with multiple patterns
+def check_password(pw):
+    checks = [
+        (r'.{8,}',          "At least 8 characters"),
+        (r'[A-Z]',          "At least one uppercase letter"),
+        (r'[a-z]',          "At least one lowercase letter"),
+        (r'\\d',             "At least one digit"),
+        (r'[!@#$%^&*()_+]', "At least one special character"),
+    ]
+    results = [(bool(re.search(p, pw)), msg) for p, msg in checks]
+    score   = sum(1 for ok, _ in results if ok)
+    return results, score
+
+passwords = ["abc", "Password1", "MyP@ss1!", "S3cur3!Pass#2024"]
+print("=== Password Checker ===")
+for pw in passwords:
+    results, score = check_password(pw)
+    strength = ["Weak","Fair","Good","Strong","Very Strong"][min(score,4)]
+    print(f"  '{pw}'  [{strength} {score}/5]")
+    for ok, msg in results:
+        print(f"    {'✓' if ok else '✗'} {msg}")
+    print()
+
+# Lookahead: price extraction
+print("=== Lookahead Extraction ===")
+text = "apple: $1.99, banana: $0.59, cherry: $3.49 (sale), grape: €2.00"
+usd_prices = re.findall(r'(?<=\\$)[\\d.]+', text)
+items_usd   = re.findall(r'\\w+(?=: \\$)', text)
+print(f"  USD items:  {items_usd}")
+print(f"  USD prices: {usd_prices}")
+total = sum(float(p) for p in usd_prices)
+print(f"  USD total:  ${total:.2f}")
+
+# re.sub with function
+print()
+print("=== Sub with Function ===")
+template = "Hello {name}, you have {count} messages and {xp} XP."
+data      = {"name": "Alice", "count": "7", "xp": "1500"}
+
+def replace_var(m):
+    key = m.group(1)
+    return data.get(key, m.group(0))
+
+result = re.sub(r'\\{(\\w+)\\}', replace_var, template)
+print(f"  Template: {template}")
+print(f"  Result:   {result}")
+
+# Split on multiple delimiters
+print()
+print("=== Flexible Split ===")
+raw = "Alice=30, Bob:25;Carol|28  Dave-22"
+parts = re.split(r'[=:;|,\\s\\-]+', raw)
+print(f"  Parts: {[p for p in parts if p]}")
+""",
+                "quiz": {
+                    "title": "Advanced Regex Quiz",
+                    "xp_reward": 30,
+                    "questions": [
+                        {
+                            "text": "What does `(?=...)` do in regex?",
+                            "type": "mcq",
+                            "a": "Captures a named group", "b": "Positive lookahead — matches if followed by pattern",
+                            "c": "Positive lookbehind — matches if preceded by pattern", "d": "Makes the group optional",
+                            "correct": "b",
+                            "explanation": "(?=...) is a positive lookahead. It asserts that the pattern ahead must match, but doesn't consume characters."
+                        },
+                        {
+                            "text": "What does `re.sub(r'(\\\\w+) (\\\\w+)', r'\\\\2 \\\\1', 'Hi World')` return?",
+                            "type": "code", "code": "import re; re.sub(r'(\\w+) (\\w+)', r'\\2 \\1', 'Hi World')",
+                            "a": "Hi World", "b": "World Hi", "c": "Hi Hi", "d": "Error",
+                            "correct": "b",
+                            "explanation": "\\2 \\1 swaps group 2 and group 1. 'Hi' is group 1, 'World' is group 2, so result is 'World Hi'."
+                        },
+                    ]
+                }
+            },
+        ]
+    },
+
+    # ═══════════════════════════════════════════════════════
+    # 14. ALGORITHMS & COMPLEXITY
+    # ═══════════════════════════════════════════════════════
+    {
+        "title": "Algorithms & Complexity", "slug": "algorithms", "color": "violet",
+        "description": "Big-O notation, sorting, searching, recursion, and classic CS algorithms in Python",
+        "icon": "🧮", "order": 14,
+        "lessons": [
+            {
+                "title": "Big-O & Complexity", "slug": "big-o-complexity",
+                "difficulty": "intermediate", "order": 1, "xp_reward": 20,
+                "content": """# Big-O & Complexity
+
+Big-O notation describes how an algorithm's time or space grows as input grows.
+
+## Common Complexities
+
+| Big-O | Name | Example |
+|-------|------|---------|
+| O(1) | Constant | Dict lookup, list index |
+| O(log n) | Logarithmic | Binary search |
+| O(n) | Linear | List scan, for loop |
+| O(n log n) | Linearithmic | Merge sort, `sorted()` |
+| O(n²) | Quadratic | Nested loops |
+| O(2ⁿ) | Exponential | Naive recursion |
+
+## Recognising Complexity
+
+```python
+# O(1) — constant, doesn't depend on input size
+def get_first(lst):
+    return lst[0]
+
+# O(n) — one pass through input
+def find_max(lst):
+    m = lst[0]
+    for x in lst:
+        if x > m: m = x
+    return m
+
+# O(n²) — nested loops over same data
+def has_duplicate_slow(lst):
+    for i in range(len(lst)):
+        for j in range(i + 1, len(lst)):
+            if lst[i] == lst[j]:
+                return True
+    return False
+
+# O(n) — set lookup is O(1)
+def has_duplicate_fast(lst):
+    return len(lst) != len(set(lst))
+```
+
+## Python Built-ins Complexity
+
+```python
+len(lst)          # O(1)
+lst[i]            # O(1)
+lst.append(x)     # O(1) amortized
+lst.insert(0, x)  # O(n) — shifts all elements!
+x in lst          # O(n) — linear scan
+x in set_         # O(1) — hash lookup
+x in dict_        # O(1) — hash lookup
+sorted(lst)       # O(n log n) — Timsort
+```
+
+## Space Complexity
+
+```python
+# O(1) space — uses fixed extra memory
+def reverse_in_place(lst):
+    l, r = 0, len(lst) - 1
+    while l < r:
+        lst[l], lst[r] = lst[r], lst[l]
+        l += 1; r -= 1
+
+# O(n) space — creates new list
+def reverse_new(lst):
+    return lst[::-1]
+```
+
+> 💡 Python's `list.sort()` uses **Timsort** — O(n log n) worst case, O(n) on nearly sorted data.
+""",
+                "code_example": """import time
+import random
+
+def timer(fn, *args):
+    t0 = time.perf_counter()
+    result = fn(*args)
+    return result, (time.perf_counter() - t0) * 1000
+
+# Demonstrate O(n) vs O(1) lookup
+print("=== O(n) list vs O(1) set/dict ===")
+sizes = [1_000, 10_000, 100_000, 1_000_000]
+target = -1  # worst case: not in collection
+
+for n in sizes:
+    data     = list(range(n))
+    data_set = set(data)
+
+    _, ms_list = timer(lambda: target in data)
+    _, ms_set  = timer(lambda: target in data_set)
+
+    print(f"  n={n:>9,}  list={ms_list:.3f}ms  set={ms_set:.4f}ms  "
+          f"speedup={ms_list/ms_set:.0f}x")
+
+# O(n²) vs O(n log n) sort comparison
+print()
+print("=== O(n²) Bubble Sort vs O(n log n) Timsort ===")
+
+def bubble_sort(lst):
+    lst = list(lst)
+    n = len(lst)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if lst[j] > lst[j + 1]:
+                lst[j], lst[j + 1] = lst[j + 1], lst[j]
+    return lst
+
+for n in [100, 500, 2000]:
+    data = [random.randint(0, 10000) for _ in range(n)]
+    _, ms_bubble = timer(bubble_sort, data)
+    _, ms_tim    = timer(sorted, data)
+    print(f"  n={n:>5}  bubble={ms_bubble:.2f}ms  timsort={ms_tim:.3f}ms  "
+          f"ratio={ms_bubble/max(ms_tim,0.001):.0f}x")
+
+# Space complexity demo
+print()
+print("=== Space: O(1) in-place vs O(n) new list ===")
+data = list(range(10))
+print(f"  Original:       {data}")
+
+in_place = list(data)
+l, r = 0, len(in_place) - 1
+while l < r:
+    in_place[l], in_place[r] = in_place[r], in_place[l]
+    l += 1; r -= 1
+print(f"  In-place O(1):  {in_place}")
+print(f"  New list  O(n): {data[::-1]}")
+""",
+                "quiz": {
+                    "title": "Big-O Quiz",
+                    "xp_reward": 25,
+                    "questions": [
+                        {
+                            "text": "What is the time complexity of checking `x in my_set` for a Python set?",
+                            "type": "mcq",
+                            "a": "O(n)", "b": "O(log n)", "c": "O(1)", "d": "O(n²)",
+                            "correct": "c",
+                            "explanation": "Python sets use hash tables, so membership testing is O(1) average case."
+                        },
+                        {
+                            "text": "What is the complexity of Python's built-in `sorted()`?",
+                            "type": "mcq",
+                            "a": "O(n)", "b": "O(n²)", "c": "O(log n)", "d": "O(n log n)",
+                            "correct": "d",
+                            "explanation": "Python uses Timsort which is O(n log n) in the worst case."
+                        },
+                        {
+                            "text": "`lst.insert(0, x)` on a Python list is O(1).",
+                            "type": "truefalse",
+                            "a": "True", "b": "False", "c": "", "d": "",
+                            "correct": "b",
+                            "explanation": "Inserting at index 0 requires shifting all n existing elements — that's O(n). Only append() is O(1) amortized."
+                        },
+                        {
+                            "text": "Which algorithm has O(n²) worst-case complexity?",
+                            "type": "mcq",
+                            "a": "Binary search", "b": "Merge sort", "c": "Bubble sort", "d": "Timsort",
+                            "correct": "c",
+                            "explanation": "Bubble sort compares every pair of elements, giving O(n²) comparisons in the worst case."
+                        },
+                    ]
+                }
+            },
+            {
+                "title": "Sorting & Searching", "slug": "sorting-searching",
+                "difficulty": "intermediate", "order": 2, "xp_reward": 20,
+                "content": """# Sorting & Searching
+
+## Python's sorted() — Key Functions
+
+```python
+# Sort by key
+students = [{"name":"Bob","gpa":3.2},{"name":"Alice","gpa":3.8}]
+sorted(students, key=lambda s: s["gpa"], reverse=True)
+
+# Multi-key sort
+data = [("Alice",3),("Bob",1),("Alice",1)]
+sorted(data, key=lambda x: (x[0], x[1]))
+
+# Sort strings by length then alphabetically
+words = ["banana","fig","apple","date","kiwi"]
+sorted(words, key=lambda w: (len(w), w))
+```
+
+## Binary Search — O(log n)
+
+```python
+import bisect
+
+# On a SORTED list only
+def binary_search(lst, target):
+    lo, hi = 0, len(lst) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if lst[mid] == target:   return mid
+        elif lst[mid] < target:  lo = mid + 1
+        else:                    hi = mid - 1
+    return -1
+
+# bisect module — maintains sorted order
+lst = [1, 3, 5, 7, 9]
+bisect.insort(lst, 4)   # [1, 3, 4, 5, 7, 9]
+bisect.bisect_left(lst, 5)   # 3 — index to insert 5
+```
+
+## heapq — Priority Queue O(log n)
+
+```python
+import heapq
+
+nums = [5, 1, 8, 2, 9, 3]
+heapq.heapify(nums)        # In-place min-heap: O(n)
+
+heapq.heappush(nums, 4)    # Push: O(log n)
+heapq.heappop(nums)        # Pop smallest: O(log n)
+
+heapq.nlargest(3, nums)    # Top 3: O(n log k)
+heapq.nsmallest(3, nums)   # Bottom 3: O(n log k)
+```
+
+## collections.Counter — Frequency Sort
+
+```python
+from collections import Counter
+
+words = "the quick brown fox jumps over the lazy dog the".split()
+c = Counter(words)
+c.most_common(3)   # [('the', 3), ('quick', 1), ...]
+```
+""",
+                "code_example": """import bisect
+import heapq
+from collections import Counter
+
+# ── Binary search ────────────────────────────
+print("=== Binary Search ===")
+def binary_search(lst, target):
+    lo, hi = 0, len(lst) - 1
+    steps  = 0
+    while lo <= hi:
+        steps += 1
+        mid = (lo + hi) // 2
+        if   lst[mid] == target: return mid, steps
+        elif lst[mid] < target:  lo = mid + 1
+        else:                    hi = mid - 1
+    return -1, steps
+
+n    = 1_000_000
+data = list(range(n))
+for target in [0, 42, 500_000, 999_999, -1]:
+    idx, steps = binary_search(data, target)
+    print(f"  target={target:>8} -> idx={idx:>8}, steps={steps} (vs {n:,} linear)")
+
+# ── heapq: task scheduler ────────────────────
+print()
+print("=== Priority Queue (heapq) ===")
+tasks = []
+heapq.heappush(tasks, (3, "Send report"))
+heapq.heappush(tasks, (1, "Fix critical bug"))
+heapq.heappush(tasks, (2, "Code review"))
+heapq.heappush(tasks, (1, "Deploy hotfix"))
+heapq.heappush(tasks, (4, "Write docs"))
+
+print("  Processing by priority:")
+while tasks:
+    priority, task = heapq.heappop(tasks)
+    print(f"    P{priority} → {task}")
+
+# ── bisect: sorted insert ────────────────────
+print()
+print("=== bisect: maintain sorted order ===")
+scores = []
+new_scores = [72, 45, 88, 91, 60, 77, 55, 95]
+for s in new_scores:
+    bisect.insort(scores, s)
+    print(f"  insert {s:3} → {scores}")
+
+# ── Counter: word frequency ──────────────────
+print()
+print("=== Counter: frequency analysis ===")
+text = "to be or not to be that is the question to be"
+c = Counter(text.split())
+print(f"  Most common: {c.most_common(4)}")
+print(f"  'to' count:  {c['to']}")
+print(f"  Unique words:{len(c)}")
+""",
+                "quiz": {
+                    "title": "Sorting & Searching Quiz",
+                    "xp_reward": 25,
+                    "questions": [
+                        {
+                            "text": "How many steps does binary search take on a list of 1,024 elements (worst case)?",
+                            "type": "mcq",
+                            "a": "1024", "b": "512", "c": "10", "d": "32",
+                            "correct": "c",
+                            "explanation": "log₂(1024) = 10. Binary search halves the search space each step."
+                        },
+                        {
+                            "text": "What does `heapq.heappop(heap)` always return?",
+                            "type": "mcq",
+                            "a": "The largest element", "b": "The last inserted element",
+                            "c": "The smallest element", "d": "A random element",
+                            "correct": "c",
+                            "explanation": "Python's heapq implements a min-heap, so heappop() always returns the smallest element."
+                        },
+                        {
+                            "text": "Binary search can be used on an unsorted list.",
+                            "type": "truefalse",
+                            "a": "True", "b": "False", "c": "", "d": "",
+                            "correct": "b",
+                            "explanation": "Binary search requires a sorted list. It relies on comparing mid with target to eliminate half the search space."
+                        },
+                    ]
+                }
+            },
+            {
+                "title": "Recursion & Dynamic Programming", "slug": "recursion-dp",
+                "difficulty": "advanced", "order": 3, "xp_reward": 30,
+                "content": """# Recursion & Dynamic Programming
+
+## Recursion Basics
+
+```python
+# Every recursive function needs:
+# 1. Base case — stops recursion
+# 2. Recursive case — reduces problem
+
+def factorial(n):
+    if n <= 1: return 1          # base case
+    return n * factorial(n - 1)  # recursive case
+
+# Stack depth: Python's default limit is ~1000
+import sys
+sys.setrecursionlimit(10_000)
+```
+
+## The Problem with Naive Recursion
+
+```python
+# Exponential O(2^n) — recalculates same values
+def fib_slow(n):
+    if n <= 1: return n
+    return fib_slow(n-1) + fib_slow(n-2)
+
+fib_slow(40)  # Takes seconds!
+```
+
+## Memoization (Top-Down DP)
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib_fast(n):
+    if n <= 1: return n
+    return fib_fast(n-1) + fib_fast(n-2)
+
+fib_fast(1000)   # Instant!
+```
+
+## Tabulation (Bottom-Up DP)
+
+```python
+# Build solution from smallest subproblems
+def fib_dp(n):
+    if n <= 1: return n
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i-1] + dp[i-2]
+    return dp[n]
+
+# Space-optimised O(1)
+def fib_optimal(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+```
+
+## Classic DP: Coin Change
+
+```python
+def coin_change(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for coin in coins:
+        for x in range(coin, amount + 1):
+            dp[x] = min(dp[x], dp[x - coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1
+
+coin_change([1, 5, 10, 25], 41)  # 3 (25+10+5+1... wait, 25+10+5+1=41? no: 25+16? best: 25+10+5+1=4)
+```
+""",
+                "code_example": """import time
+from functools import lru_cache
+
+# ── Recursion depth visualised ───────────────
+print("=== Recursion Call Tree (n=5) ===")
+calls = [0]
+def fib_trace(n, depth=0):
+    calls[0] += 1
+    indent = "  " * depth
+    if n <= 1:
+        print(f"  {indent}fib({n}) = {n}")
+        return n
+    print(f"  {indent}fib({n}) calls fib({n-1}) + fib({n-2})")
+    result = fib_trace(n-1, depth+1) + fib_trace(n-2, depth+1)
+    return result
+
+result = fib_trace(5)
+print(f"  Result: {result}, Total calls: {calls[0]}")
+
+# ── Memoization speedup ──────────────────────
+print()
+print("=== Naive vs Memoized Fibonacci ===")
+
+def fib_naive(n):
+    if n <= 1: return n
+    return fib_naive(n-1) + fib_naive(n-2)
+
+@lru_cache(maxsize=None)
+def fib_memo(n):
+    if n <= 1: return n
+    return fib_memo(n-1) + fib_memo(n-2)
+
+for n in [10, 20, 30, 35]:
+    t0 = time.perf_counter()
+    r1 = fib_naive(n)
+    ms_naive = (time.perf_counter()-t0)*1000
+
+    t0 = time.perf_counter()
+    r2 = fib_memo(n)
+    ms_memo = (time.perf_counter()-t0)*1000
+
+    print(f"  fib({n:2}) = {r1:8,}  naive={ms_naive:.2f}ms  memo={ms_memo:.4f}ms  "
+          f"speedup={ms_naive/max(ms_memo,0.0001):.0f}x")
+
+# ── Coin change DP ───────────────────────────
+print()
+print("=== Coin Change (Bottom-Up DP) ===")
+
+def coin_change(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for coin in coins:
+        for x in range(coin, amount + 1):
+            dp[x] = min(dp[x], dp[x - coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1
+
+def coin_combo(coins, amount):
+    dp      = [[] for _ in range(amount + 1)]
+    dp[0]   = []
+    for coin in coins:
+        for x in range(coin, amount + 1):
+            if dp[x - coin] is not None and (dp[x] == [] or len(dp[x-coin])+1 < len(dp[x])):
+                dp[x] = dp[x - coin] + [coin]
+    return dp[amount]
+
+coins = [1, 5, 10, 25]
+for amount in [11, 30, 41, 67, 99]:
+    n_coins = coin_change(coins, amount)
+    combo   = coin_combo(coins, amount)
+    print(f"  ${amount:3} = {n_coins} coins: {combo}")
+""",
+                "quiz": {
+                    "title": "Recursion & DP Quiz",
+                    "xp_reward": 30,
+                    "questions": [
+                        {
+                            "text": "What is the time complexity of naive recursive Fibonacci without memoization?",
+                            "type": "mcq",
+                            "a": "O(n)", "b": "O(n log n)", "c": "O(2ⁿ)", "d": "O(n²)",
+                            "correct": "c",
+                            "explanation": "Each call branches into 2 more calls. This creates an exponential tree of O(2^n) total calls."
+                        },
+                        {
+                            "text": "What does `@lru_cache(maxsize=None)` do?",
+                            "type": "mcq",
+                            "a": "Limits the function to None return values",
+                            "b": "Caches function results with unlimited cache size (memoization)",
+                            "c": "Disables caching", "d": "Sets recursion limit",
+                            "correct": "b",
+                            "explanation": "lru_cache caches (memoizes) results of previous calls. maxsize=None means unlimited cache — stores all unique inputs."
+                        },
+                        {
+                            "text": "Every recursive function must have a base case.",
+                            "type": "truefalse",
+                            "a": "True", "b": "False", "c": "", "d": "",
+                            "correct": "a",
+                            "explanation": "Without a base case, recursion never stops and causes a RecursionError (stack overflow)."
+                        },
+                    ]
+                }
+            },
+        ]
+    },
+
+    # ═══════════════════════════════════════════════════════
+    # 15. WORKING WITH APIs
+    # ═══════════════════════════════════════════════════════
+    {
+        "title": "Working with APIs", "slug": "working-with-apis", "color": "cyan",
+        "description": "Make HTTP requests, consume REST APIs, handle auth, and parse JSON responses",
+        "icon": "🌐", "order": 15,
+        "lessons": [
+            {
+                "title": "HTTP Requests with requests", "slug": "http-requests",
+                "difficulty": "intermediate", "order": 1, "xp_reward": 20,
+                "content": """# HTTP Requests with `requests`
+
+```bash
+pip install requests
+```
+
+## GET Requests
+
+```python
+import requests
+
+# Basic GET
+response = requests.get('https://api.github.com/users/python')
+response.status_code    # 200
+response.json()         # Parse JSON body
+response.text           # Raw string body
+response.headers        # Response headers
+
+# With query params
+params = {'page': 1, 'per_page': 10, 'sort': 'stars'}
+r = requests.get('https://api.github.com/repos', params=params)
+r.url  # https://api.github.com/repos?page=1&per_page=10&sort=stars
+```
+
+## POST, PUT, DELETE
+
+```python
+# POST with JSON body
+data = {'username': 'alice', 'email': 'alice@x.com'}
+r = requests.post('https://api.example.com/users', json=data)
+
+# PUT — update resource
+r = requests.put(f'/users/{id}', json={'email': 'new@x.com'})
+
+# DELETE
+r = requests.delete(f'/users/{id}')
+```
+
+## Authentication
+
+```python
+# Bearer token (JWT)
+headers = {'Authorization': 'Bearer eyJ...'}
+r = requests.get('/api/me', headers=headers)
+
+# Basic auth
+r = requests.get('/api', auth=('username', 'password'))
+
+# API key in header
+r = requests.get('/api', headers={'X-API-Key': 'abc123'})
+```
+
+## Error Handling
+
+```python
+try:
+    r = requests.get(url, timeout=10)
+    r.raise_for_status()   # Raises for 4xx/5xx
+    data = r.json()
+except requests.Timeout:
+    print("Request timed out")
+except requests.HTTPError as e:
+    print(f"HTTP {e.response.status_code}: {e}")
+except requests.ConnectionError:
+    print("Connection failed")
+```
+
+## Sessions (Reuse Connections)
+
+```python
+with requests.Session() as session:
+    session.headers.update({'Authorization': 'Bearer token'})
+    session.get('/api/users')     # Reuses connection + headers
+    session.get('/api/posts')
+```
+""",
+                "code_example": """import json
+
+# Simulated API client (no actual network calls in sandbox)
+class MockResponse:
+    def __init__(self, data, status=200):
+        self.status_code = status
+        self._data = data
+        self.headers = {"Content-Type": "application/json"}
+    def json(self):  return self._data
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise Exception(f"HTTP Error {self.status_code}")
+    @property
+    def ok(self): return self.status_code < 400
+
+class APIClient:
+    def __init__(self, base_url, token=None):
+        self.base_url = base_url
+        self.headers  = {"Authorization": f"Bearer {token}"} if token else {}
+        self._db      = {
+            1: {"id":1,"name":"Alice","role":"admin","xp":1500},
+            2: {"id":2,"name":"Bob","role":"user","xp":850},
+            3: {"id":3,"name":"Carol","role":"moderator","xp":1200},
+        }
+        self._next_id = 4
+
+    def get(self, path, params=None):
+        if path == "/users":
+            data = list(self._db.values())
+            if params and params.get("role"):
+                data = [u for u in data if u["role"] == params["role"]]
+            return MockResponse({"count": len(data), "results": data})
+        if path.startswith("/users/"):
+            uid = int(path.split("/")[-1])
+            if uid in self._db: return MockResponse(self._db[uid])
+            return MockResponse({"error": "Not found"}, status=404)
+        return MockResponse({"error": "Not found"}, status=404)
+
+    def post(self, path, json=None):
+        if path == "/users":
+            if not json.get("name"): return MockResponse({"error": "name required"}, status=400)
+            new_user = {"id": self._next_id, "xp": 0, "role": "user", **json}
+            self._db[self._next_id] = new_user; self._next_id += 1
+            return MockResponse(new_user, status=201)
+        return MockResponse({"error": "Not found"}, status=404)
+
+    def patch(self, path, json=None):
+        if path.startswith("/users/"):
+            uid = int(path.split("/")[-1])
+            if uid in self._db:
+                self._db[uid].update(json or {})
+                return MockResponse(self._db[uid])
+        return MockResponse({"error": "Not found"}, status=404)
+
+    def delete(self, path):
+        if path.startswith("/users/"):
+            uid = int(path.split("/")[-1])
+            if uid in self._db:
+                deleted = self._db.pop(uid)
+                return MockResponse({"deleted": deleted["name"]})
+        return MockResponse({"error": "Not found"}, status=404)
+
+client = APIClient("https://api.example.com", token="jwt-token-abc123")
+
+print("=== GET /users ===")
+r = client.get("/users")
+print(f"  Status: {r.status_code}")
+for user in r.json()["results"]:
+    print(f"  [{user['id']}] {user['name']:8} role={user['role']:12} xp={user['xp']}")
+
+print()
+print("=== GET /users?role=admin ===")
+r = client.get("/users", params={"role": "admin"})
+print(f"  Found: {r.json()['count']} admin(s)")
+print(f"  Data:  {r.json()['results']}")
+
+print()
+print("=== POST /users ===")
+r = client.post("/users", json={"name": "Dave", "role": "user"})
+print(f"  Status: {r.status_code} Created: {r.json()}")
+
+print()
+print("=== PATCH /users/4 ===")
+r = client.patch("/users/4", json={"xp": 100, "role": "moderator"})
+print(f"  Updated: {r.json()}")
+
+print()
+print("=== Error Handling ===")
+r = client.get("/users/999")
+print(f"  Status: {r.status_code} -> {r.json()}")
+try:
+    r.raise_for_status()
+except Exception as e:
+    print(f"  Exception caught: {e}")
+
+print()
+print("=== DELETE /users/3 ===")
+r = client.delete("/users/3")
+print(f"  {r.json()}")
+r2 = client.get("/users")
+print(f"  Remaining: {[u['name'] for u in r2.json()['results']]}")
+""",
+                "quiz": {
+                    "title": "HTTP & APIs Quiz",
+                    "xp_reward": 25,
+                    "questions": [
+                        {
+                            "text": "What does `response.raise_for_status()` do?",
+                            "type": "mcq",
+                            "a": "Prints the status code", "b": "Retries the request",
+                            "c": "Raises an HTTPError for 4xx and 5xx responses",
+                            "d": "Returns True if status is 200",
+                            "correct": "c",
+                            "explanation": "raise_for_status() raises requests.HTTPError if the status code is 4xx (client error) or 5xx (server error). It does nothing for 2xx responses."
+                        },
+                        {
+                            "text": "Which HTTP method is typically used to partially update a resource?",
+                            "type": "mcq",
+                            "a": "PUT", "b": "POST", "c": "PATCH", "d": "GET",
+                            "correct": "c",
+                            "explanation": "PATCH partially updates a resource. PUT replaces the entire resource. POST creates a new resource."
+                        },
+                        {
+                            "text": "What is the advantage of using `requests.Session()`?",
+                            "type": "mcq",
+                            "a": "It enables async requests", "b": "It reuses TCP connections and persists headers/cookies",
+                            "c": "It adds automatic retries", "d": "It validates SSL certificates",
+                            "correct": "b",
+                            "explanation": "Session reuses the underlying TCP connection (keep-alive) and automatically persists headers, cookies, and auth across requests."
+                        },
+                    ]
+                }
+            },
+        ]
+    },
+
+    # ═══════════════════════════════════════════════════════
+    # 16. VIRTUAL ENVIRONMENTS & PACKAGING
+    # ═══════════════════════════════════════════════════════
+    {
+        "title": "Packaging & Virtual Envs", "slug": "packaging", "color": "rose",
+        "description": "Manage dependencies with venv, pip, pyproject.toml, and publish packages to PyPI",
+        "icon": "📦", "order": 16,
+        "lessons": [
+            {
+                "title": "venv, pip & Dependency Management", "slug": "venv-pip",
+                "difficulty": "beginner", "order": 1, "xp_reward": 15,
+                "content": """# venv, pip & Dependency Management
+
+## Virtual Environments — Why?
+
+Each project needs its own dependencies at specific versions. Without venv, every package is global — projects conflict.
+
+```bash
+# Create
+python -m venv venv
+
+# Activate
+source venv/bin/activate       # macOS/Linux
+venv\\Scripts\\activate          # Windows
+
+# Deactivate
+deactivate
+```
+
+## pip Essentials
+
+```bash
+pip install requests                  # Latest
+pip install requests==2.31.0          # Exact version
+pip install "requests>=2.28,<3.0"     # Range
+
+pip install -r requirements.txt       # From file
+pip freeze > requirements.txt         # Export current env
+
+pip list                              # Show installed
+pip show requests                     # Package details
+pip uninstall requests                # Remove
+pip install --upgrade requests        # Upgrade
+
+# Check for vulnerabilities
+pip audit
+```
+
+## requirements.txt
+
+```
+django==4.2.7
+djangorestframework==3.14.0
+psycopg2-binary==2.9.9
+gunicorn==21.2.0
+python-dotenv==1.0.0
+```
+
+## Modern: pyproject.toml (PEP 621)
+
+```toml
+[project]
+name = "mypackage"
+version = "0.1.0"
+description = "My awesome package"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.28",
+    "click>=8.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "mypy"]
+
+[project.scripts]
+myapp = "mypackage.cli:main"
+```
+
+## pip install -e . (Editable Mode)
+
+```bash
+pip install -e .   # Install your own package for local dev
+                   # Changes take effect immediately without reinstalling
+```
+
+## Tools Comparison
+
+| Tool | Use |
+|------|-----|
+| `venv` | Built-in virtual environments |
+| `pip` | Install packages |
+| `pipenv` | venv + pip combined |
+| `poetry` | Modern dependency management + publish |
+| `uv` | Ultra-fast pip replacement (Rust) |
+""",
+                "code_example": """import sys
+import os
+
+# Simulate virtual environment management
+
+class VirtualEnv:
+    def __init__(self, name, python_version="3.12"):
+        self.name           = name
+        self.python_version = python_version
+        self.packages       = {}
+        self.active         = False
+        self.path           = f"/home/user/projects/{name}/venv"
+
+    def activate(self):
+        self.active = True
+        print(f"  Activated: {self.name}")
+        print(f"  Python:    {self.python_version}")
+        print(f"  Path:      {self.path}")
+
+    def install(self, package, version=None, verbose=True):
+        if not self.active: raise RuntimeError("venv not activated!")
+        # Simulate dependency resolution
+        key = package.lower()
+        if key in self.packages:
+            old = self.packages[key]
+            if version and version != old:
+                self.packages[key] = version
+                if verbose: print(f"  Upgraded: {package} {old} → {version}")
+            else:
+                if verbose: print(f"  Already installed: {package}=={old}")
+            return
+        ver = version or "latest"
+        self.packages[key] = ver
+        if verbose: print(f"  Installed: {package}=={ver}")
+
+    def freeze(self):
+        return [f"{k}=={v}" for k, v in sorted(self.packages.items())]
+
+    def show(self, package):
+        ver = self.packages.get(package.lower())
+        if ver: print(f"  {package}: {ver}")
+        else:   print(f"  {package}: not installed")
+
+print("=== Creating & Activating venv ===")
+env = VirtualEnv("myproject", "3.12.0")
+env.activate()
+
+print()
+print("=== pip install ===")
+packages = [
+    ("django",             "4.2.7"),
+    ("djangorestframework","3.14.0"),
+    ("psycopg2-binary",    "2.9.9"),
+    ("python-dotenv",      "1.0.0"),
+    ("gunicorn",           "21.2.0"),
+    ("requests",           "2.31.0"),
+    ("black",              "23.11.0"),
+    ("pytest",             "7.4.3"),
+]
+for pkg, ver in packages:
+    env.install(pkg, ver)
+
+print()
+print("=== pip freeze > requirements.txt ===")
+reqs = env.freeze()
+print("  # requirements.txt")
+for line in reqs: print(f"  {line}")
+
+print()
+print("=== pip show django ===")
+env.show("django")
+env.show("numpy")  # not installed
+
+print()
+print("=== pyproject.toml (modern packaging) ===")
+toml = \"\"\"
+[project]
+name        = "myproject"
+version     = "1.0.0"
+description = "My Python project"
+requires-python = ">=3.11"
+dependencies = [
+    "django>=4.2",
+    "psycopg2-binary>=2.9",
+    "gunicorn>=21.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "mypy"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+\"\"\"
+print(toml)
+""",
+                "quiz": {
+                    "title": "Packaging & venv Quiz",
+                    "xp_reward": 20,
+                    "questions": [
+                        {
+                            "text": "What is the purpose of a virtual environment?",
+                            "type": "mcq",
+                            "a": "To make Python run faster",
+                            "b": "To isolate project dependencies from the global Python install",
+                            "c": "To compile Python to machine code",
+                            "d": "To enable async programming",
+                            "correct": "b",
+                            "explanation": "Virtual environments isolate each project's packages and versions, preventing conflicts between projects."
+                        },
+                        {
+                            "text": "What does `pip freeze` do?",
+                            "type": "mcq",
+                            "a": "Stops all pip operations", "b": "Uninstalls all packages",
+                            "c": "Outputs all installed packages with exact versions",
+                            "d": "Locks the Python version",
+                            "correct": "c",
+                            "explanation": "pip freeze outputs installed packages as 'package==version' lines, typically redirected to requirements.txt."
+                        },
+                        {
+                            "text": "What does `pip install -e .` do?",
+                            "type": "mcq",
+                            "a": "Installs in encrypted mode",
+                            "b": "Installs the current directory as an editable/development package",
+                            "c": "Installs the latest version", "d": "Exports installed packages",
+                            "correct": "b",
+                            "explanation": "The -e flag installs in editable mode. Changes to your source code take effect immediately without reinstalling."
+                        },
+                        {
+                            "text": "You should commit your `venv/` folder to git.",
+                            "type": "truefalse",
+                            "a": "True", "b": "False", "c": "", "d": "",
+                            "correct": "b",
+                            "explanation": "Never commit venv/ — it's large and platform-specific. Commit requirements.txt or pyproject.toml instead so others can recreate the env."
+                        },
+                    ]
+                }
+            },
+        ]
+    },
+
+    # ═══════════════════════════════════════════════════════
+    # 17. DESIGN PATTERNS
+    # ═══════════════════════════════════════════════════════
+    {
+        "title": "Design Patterns", "slug": "design-patterns", "color": "indigo",
+        "description": "Singleton, Factory, Observer, Strategy, and other classic patterns in Python",
+        "icon": "🏛️", "order": 17,
+        "lessons": [
+            {
+                "title": "Creational Patterns", "slug": "creational-patterns",
+                "difficulty": "advanced", "order": 1, "xp_reward": 25,
+                "content": """# Creational Patterns
+
+Creational patterns deal with **how objects are created**.
+
+## Singleton — One Instance Only
+
+```python
+class Database:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.connected = False
+        return cls._instance
+
+    def connect(self, url):
+        self.connected = True
+        self.url = url
+
+db1 = Database()
+db2 = Database()
+db1 is db2   # True — same object!
+```
+
+## Factory — Create Without Specifying Class
+
+```python
+class Animal:
+    def speak(self): ...
+
+class Dog(Animal):
+    def speak(self): return "Woof!"
+
+class Cat(Animal):
+    def speak(self): return "Meow!"
+
+class AnimalFactory:
+    _registry = {"dog": Dog, "cat": Cat}
+
+    @classmethod
+    def create(cls, kind):
+        if kind not in cls._registry:
+            raise ValueError(f"Unknown animal: {kind}")
+        return cls._registry[kind]()
+
+    @classmethod
+    def register(cls, kind, animal_class):
+        cls._registry[kind] = animal_class
+
+# Open/Closed: add new animals without changing factory
+dog = AnimalFactory.create("dog")
+dog.speak()   # "Woof!"
+```
+
+## Builder — Construct Complex Objects Step by Step
+
+```python
+class QueryBuilder:
+    def __init__(self):
+        self._table   = None
+        self._filters = []
+        self._order   = None
+        self._limit   = None
+
+    def from_table(self, table):
+        self._table = table; return self   # method chaining
+
+    def where(self, condition):
+        self._filters.append(condition); return self
+
+    def order_by(self, field):
+        self._order = field; return self
+
+    def limit(self, n):
+        self._limit = n; return self
+
+    def build(self):
+        q = f"SELECT * FROM {self._table}"
+        if self._filters:
+            q += " WHERE " + " AND ".join(self._filters)
+        if self._order:
+            q += f" ORDER BY {self._order}"
+        if self._limit:
+            q += f" LIMIT {self._limit}"
+        return q
+
+query = (QueryBuilder()
+    .from_table("users")
+    .where("age > 18")
+    .where("active = true")
+    .order_by("name")
+    .limit(10)
+    .build())
+```
+""",
+                "code_example": """# ── Singleton ────────────────────────────────
+print("=== Singleton Pattern ===")
+
+class Config:
+    _instance = None
+    _data     = {}
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def set(self, key, value): self._data[key] = value
+    def get(self, key, default=None): return self._data.get(key, default)
+    def all(self): return dict(self._data)
+
+c1 = Config()
+c1.set("DEBUG", False)
+c1.set("DB_URL", "postgresql://localhost/mydb")
+
+c2 = Config()
+c2.set("SECRET_KEY", "abc123xyz")
+
+print(f"  c1 is c2: {c1 is c2}")
+print(f"  c1.all(): {c1.all()}")   # Has SECRET_KEY too!
+
+# ── Factory ───────────────────────────────────
+print()
+print("=== Factory Pattern ===")
+
+class Notifier:
+    def send(self, msg): raise NotImplementedError
+
+class EmailNotifier(Notifier):
+    def __init__(self, addr): self.addr = addr
+    def send(self, msg): return f"📧 Email to {self.addr}: {msg}"
+
+class SMSNotifier(Notifier):
+    def __init__(self, phone): self.phone = phone
+    def send(self, msg): return f"📱 SMS to {self.phone}: {msg}"
+
+class SlackNotifier(Notifier):
+    def __init__(self, channel): self.channel = channel
+    def send(self, msg): return f"💬 Slack #{self.channel}: {msg}"
+
+class NotifierFactory:
+    _registry = {
+        "email": EmailNotifier,
+        "sms":   SMSNotifier,
+        "slack": SlackNotifier,
+    }
+    @classmethod
+    def create(cls, kind, *args):
+        if kind not in cls._registry:
+            raise ValueError(f"Unknown notifier: {kind}")
+        return cls._registry[kind](*args)
+    @classmethod
+    def register(cls, kind, cls_):
+        cls._registry[kind] = cls_
+
+notifiers = [
+    NotifierFactory.create("email", "alice@x.com"),
+    NotifierFactory.create("sms",   "+44-7911-123456"),
+    NotifierFactory.create("slack", "alerts"),
+]
+for n in notifiers:
+    print(f"  {n.send('Server is down!')}")
+
+# ── Builder ───────────────────────────────────
+print()
+print("=== Builder Pattern ===")
+
+class QueryBuilder:
+    def __init__(self):
+        self._table = None; self._fields = ["*"]
+        self._where = []; self._order = None; self._limit = None
+
+    def select(self, *fields):    self._fields = list(fields); return self
+    def from_(self, table):       self._table  = table;        return self
+    def where(self, cond):        self._where.append(cond);    return self
+    def order_by(self, field):    self._order  = field;        return self
+    def limit(self, n):           self._limit  = n;            return self
+
+    def build(self):
+        fields = ", ".join(self._fields)
+        q = f"SELECT {fields} FROM {self._table}"
+        if self._where: q += " WHERE " + " AND ".join(self._where)
+        if self._order: q += f" ORDER BY {self._order}"
+        if self._limit: q += f" LIMIT {self._limit}"
+        return q
+
+queries = [
+    QueryBuilder().from_("users").build(),
+    QueryBuilder().select("id","name","email").from_("users").where("active=true").limit(10).build(),
+    QueryBuilder().from_("posts").where("published=true").where("views>100").order_by("views DESC").limit(5).build(),
+]
+for q in queries:
+    print(f"  {q}")
+""",
+                "quiz": {
+                    "title": "Creational Patterns Quiz",
+                    "xp_reward": 25,
+                    "questions": [
+                        {
+                            "text": "What guarantees the Singleton pattern?",
+                            "type": "mcq",
+                            "a": "Only one method can exist", "b": "Only one instance of the class can exist",
+                            "c": "The class can't be subclassed", "d": "The class is immutable",
+                            "correct": "b",
+                            "explanation": "Singleton ensures only one instance is created. All subsequent calls return the same instance."
+                        },
+                        {
+                            "text": "What is the key benefit of the Factory pattern?",
+                            "type": "mcq",
+                            "a": "Faster object creation",
+                            "b": "Decouples object creation from usage — caller doesn't need to know the concrete class",
+                            "c": "Ensures only one object exists",
+                            "d": "Builds objects step by step",
+                            "correct": "b",
+                            "explanation": "The Factory pattern hides the instantiation logic. Code depends on abstractions, not concrete classes (Open/Closed Principle)."
+                        },
+                        {
+                            "text": "Method chaining in Builder pattern works because each method returns `self`.",
+                            "type": "truefalse",
+                            "a": "True", "b": "False", "c": "", "d": "",
+                            "correct": "a",
+                            "explanation": "Each builder method modifies state then returns 'self', allowing chained calls like .where(...).limit(...).build()."
+                        },
+                    ]
+                }
+            },
+            {
+                "title": "Behavioural Patterns", "slug": "behavioural-patterns",
+                "difficulty": "advanced", "order": 2, "xp_reward": 25,
+                "content": """# Behavioural Patterns
+
+Behavioural patterns deal with **how objects communicate and behave**.
+
+## Observer — Publish / Subscribe
+
+```python
+class EventEmitter:
+    def __init__(self):
+        self._listeners = {}
+
+    def on(self, event, callback):
+        self._listeners.setdefault(event, []).append(callback)
+
+    def emit(self, event, *args, **kwargs):
+        for cb in self._listeners.get(event, []):
+            cb(*args, **kwargs)
+
+emitter = EventEmitter()
+emitter.on('login', lambda u: print(f"Welcome {u}!"))
+emitter.on('login', lambda u: send_welcome_email(u))
+emitter.emit('login', 'Alice')
+```
+
+## Strategy — Swap Algorithms at Runtime
+
+```python
+class Sorter:
+    def __init__(self, strategy):
+        self._strategy = strategy
+
+    def sort(self, data):
+        return self._strategy(data)
+
+# Different strategies
+quick_sorter  = Sorter(sorted)
+reverse_sorter= Sorter(lambda d: sorted(d, reverse=True))
+len_sorter    = Sorter(lambda d: sorted(d, key=len))
+
+words = ["banana","fig","apple","date"]
+quick_sorter.sort(words)    # ['apple', 'banana', 'date', 'fig']
+len_sorter.sort(words)      # ['fig', 'date', 'apple', 'banana']
+```
+
+## Command — Encapsulate Actions + Undo
+
+```python
+class TextEditor:
+    def __init__(self):
+        self.text    = ""
+        self.history = []
+
+    def execute(self, command):
+        command.execute(self)
+        self.history.append(command)
+
+    def undo(self):
+        if self.history:
+            self.history.pop().undo(self)
+
+class InsertCommand:
+    def __init__(self, text):
+        self.text = text
+    def execute(self, editor): editor.text += self.text
+    def undo(self,   editor):  editor.text  = editor.text[:-len(self.text)]
+```
+""",
+                "code_example": """# ── Observer ─────────────────────────────────
+print("=== Observer Pattern ===")
+
+class EventEmitter:
+    def __init__(self): self._listeners = {}
+    def on(self, event, cb):
+        self._listeners.setdefault(event, []).append(cb)
+    def off(self, event, cb):
+        if event in self._listeners:
+            self._listeners[event] = [f for f in self._listeners[event] if f != cb]
+    def emit(self, event, **kwargs):
+        for cb in self._listeners.get(event, []):
+            cb(**kwargs)
+
+log     = []
+emails  = []
+
+class UserService:
+    def __init__(self, emitter): self.emitter = emitter; self.users = {}
+    def register(self, name, email):
+        user = {"id": len(self.users)+1, "name": name, "email": email}
+        self.users[user["id"]] = user
+        self.emitter.emit("user_registered", user=user)
+        return user
+
+bus = EventEmitter()
+bus.on("user_registered", lambda user: log.append(f"Audit: {user['name']} registered"))
+bus.on("user_registered", lambda user: emails.append(f"Welcome email -> {user['email']}"))
+bus.on("user_registered", lambda user: print(f"  [Event] New user: {user['name']}"))
+
+svc = UserService(bus)
+svc.register("Alice", "alice@x.com")
+svc.register("Bob",   "bob@x.com")
+
+print(f"  Audit log: {log}")
+print(f"  Emails:    {emails}")
+
+# ── Strategy ─────────────────────────────────
+print()
+print("=== Strategy Pattern ===")
+
+class PriceCalculator:
+    def __init__(self, strategy): self.strategy = strategy
+    def calculate(self, price):  return self.strategy(price)
+
+strategies = {
+    "standard":  lambda p: p,
+    "student":   lambda p: p * 0.80,
+    "senior":    lambda p: p * 0.75,
+    "employee":  lambda p: p * 0.60,
+    "vip":       lambda p: max(0, p - 50) * 0.70,
+}
+
+base_price = 120.00
+print(f"  Base price: ${base_price:.2f}")
+for name, strategy in strategies.items():
+    calc  = PriceCalculator(strategy)
+    final = calc.calculate(base_price)
+    saved = base_price - final
+    print(f"  {name:10} -> ${final:7.2f}  (saved ${saved:.2f})")
+
+# ── Command + Undo ────────────────────────────
+print()
+print("=== Command Pattern (with Undo) ===")
+
+class Editor:
+    def __init__(self): self.text = ""; self.history = []
+    def execute(self, cmd): cmd.execute(self); self.history.append(cmd)
+    def undo(self):
+        if self.history: self.history.pop().undo(self)
+    def __repr__(self): return f"Editor('{self.text}')"
+
+class Insert:
+    def __init__(self, text): self.text = text
+    def execute(self, e): e.text += self.text
+    def undo(self, e):    e.text  = e.text[:-len(self.text)]
+
+class ReplaceAll:
+    def __init__(self, old, new): self.old=old; self.new=new; self.prev=None
+    def execute(self, e): self.prev=e.text; e.text=e.text.replace(self.old, self.new)
+    def undo(self, e):    e.text = self.prev
+
+ed = Editor()
+for cmd in [Insert("Hello "), Insert("World"), Insert("!"), ReplaceAll("World","Python")]:
+    ed.execute(cmd)
+    print(f"  After execute: {ed}")
+
+print("  --- Undoing ---")
+for _ in range(3):
+    ed.undo()
+    print(f"  After undo:    {ed}")
+""",
+                "quiz": {
+                    "title": "Behavioural Patterns Quiz",
+                    "xp_reward": 25,
+                    "questions": [
+                        {
+                            "text": "What problem does the Observer pattern solve?",
+                            "type": "mcq",
+                            "a": "Creating complex objects step by step",
+                            "b": "Allowing multiple objects to react to events without tight coupling",
+                            "c": "Ensuring only one instance exists",
+                            "d": "Caching expensive computations",
+                            "correct": "b",
+                            "explanation": "Observer (pub/sub) decouples event producers from consumers. The emitter doesn't know who's listening — listeners subscribe independently."
+                        },
+                        {
+                            "text": "What is the key benefit of the Strategy pattern?",
+                            "type": "mcq",
+                            "a": "Undo/redo functionality",
+                            "b": "Swap algorithms or behaviours at runtime without changing client code",
+                            "c": "Restrict class instantiation", "d": "Build objects incrementally",
+                            "correct": "b",
+                            "explanation": "Strategy lets you define a family of algorithms and make them interchangeable. The client selects the strategy at runtime."
+                        },
+                        {
+                            "text": "The Command pattern enables undo functionality by storing the reverse operation.",
+                            "type": "truefalse",
+                            "a": "True", "b": "False", "c": "", "d": "",
+                            "correct": "a",
+                            "explanation": "Each Command object stores both execute() and undo() logic. A history stack lets you replay undos in reverse order."
+                        },
+                    ]
+                }
+            },
+        ]
+    },
+
+
 ]  # end TOPICS
 
 

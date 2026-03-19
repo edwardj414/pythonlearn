@@ -42,7 +42,7 @@ export default function LessonContent({ content }) {
             if (isBlock) {
               return (
                 <div className="relative group my-6 w-full">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg blur opacity-20"></div>
+                  <div className="relative -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg blur opacity-20"></div>
                   <SyntaxHighlighter
                     style={oneDark}
                     language={match ? match[1] : 'text'}

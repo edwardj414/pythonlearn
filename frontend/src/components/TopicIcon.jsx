@@ -2,7 +2,7 @@
 import {
   Code2, GitBranch, Wrench, Box, Database,
   ShieldAlert, RefreshCw, FolderOpen, Zap,
-  FlaskConical, BookMarked, Tag, Terminal
+  FlaskConical, BookMarked, Tag, Terminal, Regex, Network, Globe, Package, Puzzle
 } from 'lucide-react'
 
 const ICON_MAP = {
@@ -18,6 +18,12 @@ const ICON_MAP = {
   'testing':                { icon: FlaskConical,   color: 'text-emerald-400',bg: 'bg-emerald-500/10 border-emerald-500/20'},
   'standard-library':       { icon: BookMarked,     color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20' },
   'type-hints':             { icon: Tag,            color: 'text-pink-400',   bg: 'bg-pink-500/10   border-pink-500/20'   },
+  'regex':                  { icon: Regex,          color: 'text-blue-400',   bg: 'bg-blue-500/10   border-blue-500/20'   },
+  'algorithms':             { icon: Globe,          color: 'text-green-400',  bg: 'bg-green-500/10  border-green-500/20'  },
+  'working-with-apis':      { icon: Network,        color: 'text-teal-400',   bg: 'bg-teal-500/10   border-teal-500/20'   },
+  'packaging':              { icon: Package,        color: 'text-lime-400',   bg: 'bg-lime-500/10   border-lime-500/20'   },
+  'design-patterns':        { icon: Puzzle,         color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20' },
+
 }
 
 const DEFAULT = { icon: Terminal, color: 'text-slate-400', bg: 'bg-slate-500/10 border-slate-500/20' }
