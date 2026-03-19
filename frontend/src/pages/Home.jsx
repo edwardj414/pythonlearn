@@ -113,18 +113,18 @@ export default function Home() {
       <div ref={glowRef} className="pointer-events-none fixed z-10"
         style={{ transform: 'translate(-50%,-50%)', willChange: 'left,top' }}>
         <div className="w-[700px] h-[700px] rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.07) 0%, rgba(16,185,129,0.02) 40%, transparent 70%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(16,185,9,0.07) 0%, rgba(16,185,9,0.02) 40%, transparent 70%)' }} />
       </div>
       <div ref={innerGlowRef} className="pointer-events-none fixed z-10"
         style={{ transform: 'translate(-50%,-50%)', willChange: 'left,top' }}>
         <div className="w-[160px] h-[160px] rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.14) 0%, transparent 70%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(16,185,9,0.14) 0%, transparent 70%)' }} />
       </div>
 
       {/* ── STATIC BACKGROUND ── */}
       <div className="absolute inset-0 bg-[radial-gradient(#1a1a1a_1px,transparent_1px)] [background-size:24px_24px] opacity-60 z-0" />
       <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-emerald-500/8 blur-[150px] rounded-full pointer-events-none z-0 animate-[breathe_6s_infinite_alternate]" />
-      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-emerald-500/3 blur-[120px] rounded-full pointer-events-none z-0" />
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-emerald-500/3 blur-[0px] rounded-full pointer-events-none z-0" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/3 blur-[150px] rounded-full pointer-events-none z-0" />
       <div className="absolute inset-0 pointer-events-none z-0 opacity-[0.015]"
         style={{ backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,1) 2px,rgba(255,255,255,1) 4px)' }} />
@@ -134,7 +134,7 @@ export default function Home() {
         {/* ══════════════════════════════════════
             HERO
         ══════════════════════════════════════ */}
-        <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[90vh] pt-20 pb-12">
+        <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[90vh] pt-20 pb-">
           <div className="flex flex-col items-start text-left z-20">
 
             {/* Status pill */}
