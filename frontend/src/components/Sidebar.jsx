@@ -70,7 +70,7 @@ export default function Sidebar({ topics }) {
                 ))}
               </div>
 
-            : <div className="px-3 pb-6">
+            : <div className="px-3 pb-20">
                 {topics.map((topic) => {
                   const isActive = topic.slug === topicSlug
                   const isOpen = expanded[topic.slug] !== undefined ? expanded[topic.slug] : isActive
