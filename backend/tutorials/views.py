@@ -33,7 +33,6 @@ def encrypt_payload(data):
 
     cipher   = AES.new(key, AES.MODE_CBC)
     ct_bytes = cipher.encrypt(padded_data)
-    print(f"[QUIZ] KEY='{raw_key}' SHA256={sha}")
     return {
         'iv':         base64.b64encode(cipher.iv).decode('utf-8'),
         'ciphertext': base64.b64encode(ct_bytes).decode('utf-8'),
@@ -126,6 +125,7 @@ class QuizDetailView(generics.RetrieveAPIView):
     serializer_class = QuizSerializer
 
     def get_object(self):
+        print(f"[QUIZ] KEY='{raw_key}' SHA256={sha}")
         return get_object_or_404(
             Quiz,
             lesson__slug=self.kwargs['lesson_slug'],
