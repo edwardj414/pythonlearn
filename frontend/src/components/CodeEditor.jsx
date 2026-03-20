@@ -179,12 +179,12 @@ export default function CodeEditor({ defaultCode = '' }) {
 
           <div className="p-4 max-h-48 overflow-y-auto custom-scrollbar">
             {output.stdout && (
-              <TypewriterText text={output.stdout} className="text-emerald-300" isError={false} />
+              <TypewriterText text={output.stdout.trimEnd()} className="text-emerald-300" isError={false} />
             )}
 
             {output.stderr && (
               <div className={output.stdout ? "mt-3 pt-3 border-t border-rose-900/30" : ""}>
-                <TypewriterText text={output.stderr} className="text-rose-400" isError={true} />
+                <TypewriterText text={output.stderr.trimEnd()} className="text-rose-400" isError={true} />
               </div>
             )}
 
