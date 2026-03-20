@@ -24,21 +24,25 @@ from .serializers import TopicSerializer, LessonDetailSerializer, QuizSerializer
 # --- AES ENCRYPTION UTILITY ---
 # --- AES ENCRYPTION UTILITY ---
 def encrypt_payload(data):
-    raw_key  = getattr(settings, 'AES_SECRET_KEY', 'PythonLearnSecretKey2024Secure99')
-    key      = hashlib.sha256(raw_key.encode()).digest()
+    # 1. Get the raw string
+    raw_key = getattr(settings, 'AES_SECRET_KEY', 'x9P!mQ2v$L8zT#wY5kR@bN7cX4jH1fG6')
+    
+    # 2. MUST use .digest() (not .hexdigest()) to get exactly 32 raw bytes
+    key = hashlib.sha256(raw_key.encode('utf-8')).digest()
 
-    # ✅ Ensure it's a plain JSON string
-    json_data   = json.dumps(dict(data)).encode('utf-8')
-    padded_data = pad(json_data, AES.block_size)
-
-    cipher   = AES.new(key, AES.MODE_CBC)
+    # 3. Use DRF's JSONRenderer instead of json.dumps. 
+    # This safely converts the DRF data directly into a bytes object!
+    json_bytes = JSONRenderer().render(data)
+    
+    # 4. Pad and Encrypt
+    padded_data = pad(json_bytes, AES.block_size)
+    cipher = AES.new(key, AES.MODE_CBC)
     ct_bytes = cipher.encrypt(padded_data)
 
     return {
-        'iv':         base64.b64encode(cipher.iv).decode('utf-8'),
+        'iv': base64.b64encode(cipher.iv).decode('utf-8'),
         'ciphertext': base64.b64encode(ct_bytes).decode('utf-8'),
     }
-
 # --- READ-ONLY TOPIC & LESSON VIEWS ---
 class TopicListView(generics.ListAPIView):
     queryset = Topic.objects.prefetch_related('lessons').all()
