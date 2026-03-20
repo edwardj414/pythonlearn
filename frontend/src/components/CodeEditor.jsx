@@ -58,13 +58,19 @@ export default function CodeEditor({ defaultCode = '' }) {
 
   const handleRun = async () => {
     setRunning(true)
-    setOutput(null)
+    setOutput(null) // Safe reset
     try {
       const response = await runCode(code)
-      setOutput(response.data)
+      
+      // ── THE PRODUCTION FIX ──
+      // Safely extract data whether Axios wraps it or not
+      const finalData = response.data !== undefined ? response.data : response;
+      if (!finalData) throw new Error("Empty response from server");
+      
+      setOutput(finalData)
     } catch (err) {
       setOutput({
-        stderr: err.response?.data?.stderr || err.message || 'Network error: Could not connect to code runner.',
+        stderr: err.response?.data?.stderr || err.response?.data?.detail || err.message || 'Network error: Could not connect to code runner.',
         stdout: '',
         code: 1
       })
@@ -159,13 +165,14 @@ export default function CodeEditor({ defaultCode = '' }) {
       </div>
 
       {/* Animated Output Panel */}
-      {output !== null && (
+      {/* ── THE PRODUCTION FIX: catch both null and undefined ── */}
+      {!!output && (
         <div className="bg-[#050505] border-t border-slate-800 animate-in slide-in-from-top-4 fade-in duration-300">
           <div className="flex items-center gap-2 px-4 py-2 border-b border-slate-800/60 bg-[#0a0a0a]">
             <Terminal size={13} className="text-slate-500" />
             <span className="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Console Output</span>
             {hasError
-              ? <span className="ml-auto text-[10px] font-mono tracking-widest uppercase text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded">Exit Code {output.code}</span>
+              ? <span className="ml-auto text-[10px] font-mono tracking-widest uppercase text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded">Exit Code {output.code !== undefined ? output.code : 1}</span>
               : <span className="ml-auto text-[10px] font-mono tracking-widest uppercase text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">✓ Execution Successful</span>
             }
           </div>
