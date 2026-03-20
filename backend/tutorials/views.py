@@ -13,6 +13,7 @@ from django.http import JsonResponse
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer    
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 
@@ -23,18 +24,16 @@ from .serializers import TopicSerializer, LessonDetailSerializer, QuizSerializer
 # --- AES ENCRYPTION UTILITY ---
 # --- AES ENCRYPTION UTILITY ---
 def encrypt_payload(data):
-    raw_key = getattr(settings, 'AES_SECRET_KEY', 'x9P!mQ2v$L8zT#wY5kR@bN7cX4jH1fG6')
+    raw_key  = getattr(settings, 'AES_SECRET_KEY', 'PythonLearnSecretKey2024Secure99')
+    key      = hashlib.sha256(raw_key.encode()).digest()
 
-    # ✅ Match frontend: SHA256 hash the key (CryptoJS.SHA256 = 32 raw bytes)
-    key = hashlib.sha256(raw_key.encode('utf-8')).digest()  # 32 bytes
-
-    json_data   = json.dumps(data).encode('utf-8')
+    # ✅ Ensure it's a plain JSON string
+    json_data   = json.dumps(dict(data)).encode('utf-8')
     padded_data = pad(json_data, AES.block_size)
 
     cipher   = AES.new(key, AES.MODE_CBC)
     ct_bytes = cipher.encrypt(padded_data)
-    print(f"[ENCRYPT] raw_key='{raw_key}'")
-    print(f"[ENCRYPT] sha256={hashlib.sha256(raw_key.encode()).hexdigest()}")
+
     return {
         'iv':         base64.b64encode(cipher.iv).decode('utf-8'),
         'ciphertext': base64.b64encode(ct_bytes).decode('utf-8'),
