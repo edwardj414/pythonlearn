@@ -27,11 +27,10 @@ def encrypt_payload(data):
     # 1. Get the raw string
     raw_key = getattr(settings, 'AES_SECRET_KEY', 'x9P!mQ2v$L8zT#wY5kR@bN7cX4jH1fG6')
     
-    # 2. MUST use .digest() (not .hexdigest()) to get exactly 32 raw bytes
+    # 2. MUST use .digest() to get exactly 32 raw bytes
     key = hashlib.sha256(raw_key.encode('utf-8')).digest()
 
-    # 3. Use DRF's JSONRenderer instead of json.dumps. 
-    # This safely converts the DRF data directly into a bytes object!
+    # 3. Use DRF's JSONRenderer instead of json.dumps
     json_bytes = JSONRenderer().render(data)
     
     # 4. Pad and Encrypt
@@ -43,6 +42,8 @@ def encrypt_payload(data):
         'iv': base64.b64encode(cipher.iv).decode('utf-8'),
         'ciphertext': base64.b64encode(ct_bytes).decode('utf-8'),
     }
+
+
 # --- READ-ONLY TOPIC & LESSON VIEWS ---
 class TopicListView(generics.ListAPIView):
     queryset = Topic.objects.prefetch_related('lessons').all()
@@ -130,7 +131,7 @@ class QuizDetailView(generics.RetrieveAPIView):
     serializer_class = QuizSerializer
 
     def get_object(self):
-        print(f"[QUIZ] KEY='{raw_key}' SHA256={sha}")
+        # NO print statements here! Just standard Django ORM lookup.
         return get_object_or_404(
             Quiz,
             lesson__slug=self.kwargs['lesson_slug'],
@@ -138,17 +139,11 @@ class QuizDetailView(generics.RetrieveAPIView):
         )
 
     def retrieve(self, request, *args, **kwargs):
-        import hashlib
-
-        # DEBUG — check what key is actually being used
-        raw_key = getattr(settings, 'AES_SECRET_KEY', 'FALLBACK_NOT_SET')
-        sha = hashlib.sha256(raw_key.encode()).hexdigest()
-        print(f"[QUIZ] KEY='{raw_key}' SHA256={sha}")
-        # 1. Get the standard quiz object using DRF
+        # 1. Get the standard quiz object
         instance = self.get_object()
         serializer = self.get_serializer(instance)
 
-        # 2. Encrypt the serialized data to prevent cheating
+        # 2. Encrypt the serialized data
         encrypted_data = encrypt_payload(serializer.data)
 
         # 3. Return the encrypted payload
