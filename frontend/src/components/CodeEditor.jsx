@@ -18,7 +18,7 @@ const TypewriterText = ({ text, className, isError }) => {
     }
 
     // Dynamic speed: Type faster if the output is really long
-    const charsPerTick = Math.max(1, Math.floor(text.length / 60))
+    const charsPerTick = Math.max(1, Math.floor(text.length / 100))
 
     const timer = setInterval(() => {
       i += charsPerTick
@@ -28,7 +28,7 @@ const TypewriterText = ({ text, className, isError }) => {
         setIsTyping(false)
         clearInterval(timer)
       }
-    }, 15) // 15ms per frame
+    }, 25) // 15ms per frame
 
     return () => clearInterval(timer)
   }, [text])
