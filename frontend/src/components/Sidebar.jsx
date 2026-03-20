@@ -164,13 +164,18 @@ export default function Sidebar({ topics }) {
           className={`
             cursor-none absolute top-6 -right-5 z-50
             flex items-center justify-center
-            w-5 h-10 rounded-r-lg
-            bg-[#0a0a0a] border border-l-0 border-slate-800
-            hover:border-emerald-500/50 hover:text-emerald-400
-            text-slate-500 shadow-lg transition-all duration-300
-            ${!sidebarOpen ? 'translate-x-5 lg:translate-x-0' : ''}
+            w-5 h-10 rounded-r-lg border border-l-0
+            shadow-lg transition-all duration-300
+            ${!sidebarOpen
+              ? 'translate-x-5 lg:translate-x-0 bg-emerald-500/10 border-emerald-500/50 text-emerald-400 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+              : 'bg-[#0a0a0a] border-slate-800 text-slate-500 hover:border-emerald-500/50 hover:text-emerald-400'
+            }
           `}
         >
+          {/* Ping ring — only when closed */}
+          {!sidebarOpen && (
+            <span className="absolute inset-0 rounded-r-lg animate-ping bg-emerald-500/20 pointer-events-none" />
+          )}
           {sidebarOpen ? <ChevronLeft size={13} /> : <ChevronRight size={13} />}
         </button>
       </aside>
