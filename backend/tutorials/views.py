@@ -33,6 +33,8 @@ def encrypt_payload(data):
 
     cipher   = AES.new(key, AES.MODE_CBC)
     ct_bytes = cipher.encrypt(padded_data)
+    print(f"[ENCRYPT] raw_key='{raw_key}'")
+    print(f"[ENCRYPT] sha256={hashlib.sha256(raw_key.encode()).hexdigest()}")
     return {
         'iv':         base64.b64encode(cipher.iv).decode('utf-8'),
         'ciphertext': base64.b64encode(ct_bytes).decode('utf-8'),
@@ -133,6 +135,12 @@ class QuizDetailView(generics.RetrieveAPIView):
         )
 
     def retrieve(self, request, *args, **kwargs):
+        import hashlib
+
+        # DEBUG — check what key is actually being used
+        raw_key = getattr(settings, 'AES_SECRET_KEY', 'FALLBACK_NOT_SET')
+        sha = hashlib.sha256(raw_key.encode()).hexdigest()
+        print(f"[QUIZ] KEY='{raw_key}' SHA256={sha}")
         # 1. Get the standard quiz object using DRF
         instance = self.get_object()
         serializer = self.get_serializer(instance)
