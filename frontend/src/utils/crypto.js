@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 
-const SECRET_KEY = import.meta.env.VITE_AES_SECRET_KEY || "x9P!mQ2vZL8zT#wY5kR@bN7cX4jH1fG6";
+const SECRET_KEY = import.meta.env.VITE_AES_SECRET_KEY || "PythonLearnSecretKey226Secure414";
 const key = CryptoJS.SHA256(SECRET_KEY)
 export const decryptPayload = (encryptedData) => {
   // 1. Safety check
